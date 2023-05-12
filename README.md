@@ -22,8 +22,8 @@ python main.py
 
 
 ## Contributors
-Gerard Lahuerta Martín (1601350) --> 1601350@uab.cat
-Ona Sánchez Núñez (1601181) --> 1601181@uab.cat
+Gerard Lahuerta Martín (1601350) --> 1601350@uab.cat\n
+Ona Sánchez Núñez (1601181) --> 1601181@uab.cat\n
 Bruno Tejedo Miniéri (1533327) --> 1533327@uab.cat
 
 
