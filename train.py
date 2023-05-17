@@ -42,3 +42,21 @@ def train_log(loss, example_ct, epoch):
     # Where the magic happens
     wandb.log({"epoch": epoch, "loss": loss}, step=example_ct)
     print(f"Loss after {str(example_ct).zfill(5)} examples: {loss:.3f}")
+
+
+############################################################################################
+
+def train_model(model, image, criterion, optimizer, config):
+    # Tell wandb to watch what the model gets up to: gradients, weights, and more!
+    #wandb.watch(model, criterion, log="all", log_freq=10)
+
+    # Run training and track with wandb
+    total_batches = len(image) * config.epochs
+    batch_ct = 0
+    for epoch in tqdm(range(config.epochs)):
+        loss = train_batch(image, image, model, optimizer, criterion)
+        batch_ct += 1
+
+        # Report metrics every 25th batch
+        if ((batch_ct + 1) % 25) == 0:
+            print(f"Loss after {str(batch_ct).zfill(5)} examples: {loss:.3f}")

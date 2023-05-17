@@ -52,7 +52,7 @@ def make(model_type, config, device = "cuda"):
     if model_type == "Model 1":
         train, test = get_data_model_1(), get_data_model_1(train = False)
         model = Model1()#.to(device)
-        criterion = nn.CrossEntropyLoss()
+        criterion = nn.MSELoss()
     else:
         assert(False)
 
