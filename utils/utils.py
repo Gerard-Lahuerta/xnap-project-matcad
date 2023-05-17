@@ -24,7 +24,7 @@ def make_loader(dataset, batch_size):
                                          pin_memory=True, num_workers=2)
     return loader
 
-
+'''
 def make(config, device="cuda"):
     # Make the data
     train, test = get_data(train=True), get_data(train=False)
@@ -40,3 +40,22 @@ def make(config, device="cuda"):
         model.parameters(), lr=config.learning_rate)
     
     return model, train_loader, test_loader, criterion, optimizer
+'''
+    
+###################################################################################
+
+def get_data_model_1(train = True, ):
+    pass
+
+def make(model_type, config, device = "cuda"):
+
+    if model_type == "Model 1":
+        train, test = get_data_model_1(), get_data_model_1(train = False)
+        model = Model1()#.to(device)
+        criterion = nn.CrossEntropyLoss()
+    else:
+        assert(False)
+
+    optimizer = torch.optim.Adam(model.parameters(), lr=config.learning_rate)
+
+    return model, train, test, criterion, optimizer

@@ -48,7 +48,7 @@ def model_pipeline(cfg:dict) -> None:
     return model
 
 if __name__ == "__main__":
-    wandb.login()
+    #wandb.login()
 
     config = dict(
         epochs=5,
@@ -58,5 +58,14 @@ if __name__ == "__main__":
         learning_rate=5e-3,
         dataset="MNIST",
         architecture="CNN")
-    model = model_pipeline(config)
+    
+    #model = model_pipeline(config)
+
+    model, train_loader, test_loader, criterion, optimizer = make(model_type="Model 1", config=config)
+
+    # and use them to train the model
+    train(model, train_loader, criterion, optimizer, config)
+
+    # and test its final performance
+    test(model, test_loader)
 

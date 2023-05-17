@@ -27,21 +27,21 @@ class ConvNet(nn.Module):
 #############################################################################
 
 class Model1(nn.Module):
-    def __init__(self, dim_data_images) -> None:
+    def __init__(self):
         super(Model1, self).__init__()
 
         self.encoder = nn.Sequential(
-            nn.Conv2d(8, (3, 3), padding=1, strides=2),
+            nn.Conv2d(1, 8, (3, 3), padding=1, stride=2),
             nn.ReLU(),
-            nn.Conv2d(8, (3, 3), padding=0, strides=1),
+            nn.Conv2d(8, 8, (3, 3), padding=0, stride=1),
             nn.ReLU(),
-            nn.Conv2d(16, (3, 3), padding=0, strides=1),
+            nn.Conv2d(8, 16, (3, 3), padding=0, stride=1),
             nn.ReLU(),
-            nn.Conv2d(16, (3, 3), padding=1, strides=2),
+            nn.Conv2d(16, 16, (3, 3), padding=1, stride=2),
             nn.ReLU(),
-            nn.Conv2d(32, (3, 3), padding=0, strides=1),
+            nn.Conv2d(32, 32, (3, 3), padding=0, stride=1),
             nn.ReLU(),
-            nn.Conv2d(32, (3, 3), padding=1, strides=2)        
+            nn.Conv2d(32, 32, (3, 3), padding=1, stride=2)        
             #model.add(InputLayer(input_shape=(None, None, 1)))
             #model.add(Conv2D(8, (3, 3), activation='relu', padding='same', strides=2))
             #model.add(Conv2D(8, (3, 3), activation='relu', padding='same'))
@@ -53,13 +53,13 @@ class Model1(nn.Module):
 
         self.decoder = nn.Sequential(
             nn.MaxUnpool2d(2,2),
-            nn.Conv2d(32, (3,3), padding = 0, stride = 1),
+            nn.Conv2d(32, 32, (3,3), padding = 0, stride = 1),
             nn.ReLU(),
             nn.MaxUnpool2d((2,2)),
-            nn.Conv2d(32, (3,3), padding = 0, stride = 1),
+            nn.Conv2d(32,32, (3,3), padding = 0, stride = 1),
             nn.ReLU(),
             nn.MaxUnpool2d((2,2)),
-            nn.Conv2d(2, (3,3), padding = 0, stride = 1),
+            nn.Conv2d(32, 2, (3,3), padding = 0, stride = 1),
             nn.Tanh()
             #model.add(UpSampling2D((2, 2)))
             #model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
