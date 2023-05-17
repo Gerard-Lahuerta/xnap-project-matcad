@@ -52,7 +52,21 @@ class Model1(nn.Module):
         )
 
         self.decoder = nn.Sequential(
-
+            nn.MaxUnpool2d(2,2),
+            nn.Conv2d(32, (3,3), padding = 0, stride = 1),
+            nn.ReLU(),
+            nn.MaxUnpool2d((2,2)),
+            nn.Conv2d(32, (3,3), padding = 0, stride = 1),
+            nn.ReLU(),
+            nn.MaxUnpool2d((2,2)),
+            nn.Conv2d(2, (3,3), padding = 0, stride = 1),
+            nn.Tanh()
+            #model.add(UpSampling2D((2, 2)))
+            #model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
+            #model.add(UpSampling2D((2, 2)))
+            #model.add(Conv2D(16, (3, 3), activation='relu', padding='same'))
+            #model.add(UpSampling2D((2, 2)))
+            #model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
         )
     
     def forward(self, x):
