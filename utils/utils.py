@@ -4,6 +4,8 @@ import torch.nn
 import torchvision
 import torchvision.transforms as transforms
 from models.models import *
+import matplotlib as plt
+from torchvision.utils import make_grid
 
 def get_data(slice=1, train=True):
     full_dataset = torchvision.datasets.MNIST(root=".",
@@ -56,6 +58,19 @@ def make(model_type, config, device = "cuda"):
     else:
         assert(False)
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=config.learning_rate)
+    optimizer = torch.optim.Adam(model.parameters(), lr=config["learning_rate"])
 
     return model, train, test, criterion, optimizer
+
+
+def plot_image(img):
+    img = img.clamp(0, 1) # Ensure that the range of greyscales is between 0 and 1
+    npimg = img.numpy()   # Convert to NumPy
+    npimg = np.transpose(npimg, (2, 1, 0))   # Change the order to (W, H, C)
+    plt.imshow(npimg)
+    plt.show()
+
+
+def show_image(img):
+    plot_image(make_grid(img.detach().cpu().view(-1, 1, 28, 28).transpose(2, 3), nrow=2, normalize = True))
+    plot_image(make_grid(img.detach().cpu().view(-1, 1, 28, 28).transpose(2, 3), nrow=2, normalize = True))   

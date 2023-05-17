@@ -1,5 +1,7 @@
 import wandb
 import torch
+from utils.utils import show_image
+
 
 def test(model, test_loader, device="cuda", save:bool= True):
     # Run the model on some test examples
@@ -31,3 +33,23 @@ def test(model, test_loader, device="cuda", save:bool= True):
                           dynamic_axes={'input': {0: 'batch_size'},  # variable length axes
                                         'output': {0: 'batch_size'}})
         wandb.save("model.onnx")
+
+
+########################################################################################################################
+
+
+def test(model, test, epoch, epochs, criterion, device="cuda", save:bool= True):
+    model.eval()
+    
+    with torch.no_grad():
+        output = model(test)
+    
+    # compute training reconstruction loss
+    loss = criterion(output, test)
+    
+    # display the epoch training loss
+    print("Test loss = {:.6f}".format(loss))
+    show_image(test)
+    show_image(output)
+        
+    wandb.log({"Loss": loss})
