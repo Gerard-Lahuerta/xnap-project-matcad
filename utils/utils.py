@@ -46,8 +46,18 @@ def make(config, device="cuda"):
     
 ###################################################################################
 
-def get_data_model_1(train = True, ):
-    pass
+def get_data_model_1(path):
+    image = Image.open(path)
+    imgGray = image.convert('L')
+
+    # Define a transform to convert the image to tensor
+    transform = transforms.ToTensor()
+
+    # Convert the image to PyTorch tensor
+    tensor = transform(imgGray)
+    X = tensor.reshape(1, 400, 400, 1)
+
+    return X
 
 def make(model_type, config, device = "cuda"):
 
