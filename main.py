@@ -29,7 +29,7 @@ torchvision.datasets.MNIST.mirrors = [mirror for mirror in torchvision.datasets.
 
 
 
-
+'''
 def model_pipeline(cfg:dict) -> None:
     # tell wandb to get started
     with wandb.init(project="pytorch-demo", config=cfg):
@@ -46,7 +46,8 @@ def model_pipeline(cfg:dict) -> None:
       test(model, test_loader)
 
     return model
-
+'''
+    
 if __name__ == "__main__":
     #wandb.login()
 
