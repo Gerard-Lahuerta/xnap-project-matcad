@@ -60,6 +60,22 @@ def get_data_model_1(path):
 
     return X
 
+def get_data_model_2(path):
+    Xaux = []
+    X = []
+    # path = ruta a la carpeta on es troben totes les imatges
+    for filename in os.listdir(path):
+        Xaux.append(Image.open(path + filename))
+    for image in Xaux:
+        image = image.convert('L')
+        transform = transforms.ToTensor()
+        image = transform(image)
+        X.append(image)
+
+    split = int(0.95 * len(X))
+    Xtrain = X[:split]
+    return Xtrain
+
 def make(model_type, config, device = "cuda"):
 
     if model_type == "Model 1":
