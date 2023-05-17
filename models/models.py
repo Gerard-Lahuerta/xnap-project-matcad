@@ -1,4 +1,5 @@
 import torch.nn as nn
+import numpy as np
 
 # Conventional and convolutional neural network
 
@@ -22,3 +23,38 @@ class ConvNet(nn.Module):
         out = out.reshape(out.size(0), -1)
         out = self.fc(out)
         return out
+    
+#############################################################################
+
+class Model1(nn.Module):
+    def __init__(self, dim_data_images) -> None:
+        super(Model1, self).__init__()
+
+        self.encoder = nn.Sequential(
+            nn.Conv2d(8, (3, 3), padding=1, strides=2),
+            nn.ReLU(),
+            nn.Conv2d(8, (3, 3), padding=0, strides=1),
+            nn.ReLU(),
+            nn.Conv2d(16, (3, 3), padding=0, strides=1),
+            nn.ReLU(),
+            nn.Conv2d(16, (3, 3), padding=1, strides=2),
+            nn.ReLU(),
+            nn.Conv2d(32, (3, 3), padding=0, strides=1),
+            nn.ReLU(),
+            nn.Conv2d(32, (3, 3), padding=1, strides=2)        
+            #model.add(InputLayer(input_shape=(None, None, 1)))
+            #model.add(Conv2D(8, (3, 3), activation='relu', padding='same', strides=2))
+            #model.add(Conv2D(8, (3, 3), activation='relu', padding='same'))
+            #model.add(Conv2D(16, (3, 3), activation='relu', padding='same'))
+            #model.add(Conv2D(16, (3, 3), activation='relu', padding='same', strides=2))
+            #model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
+            #model.add(Conv2D(32, (3, 3), activation='relu', padding='same', strides=2))
+        )
+
+        self.decoder = nn.Sequential(
+
+        )
+    
+    def forward(self, x):
+        x = self.encoder(x)
+        x = self.decoder(x)
