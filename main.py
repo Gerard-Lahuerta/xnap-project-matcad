@@ -69,3 +69,6 @@ if __name__ == "__main__":
     # and test its final performance
     test(model, test_loader)
 
+
+
+    print("holaaaaaa")
