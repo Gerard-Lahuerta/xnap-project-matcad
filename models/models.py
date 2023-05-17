@@ -39,9 +39,10 @@ class Model1(nn.Module):
             nn.ReLU(),
             nn.Conv2d(16, 16, (3, 3), padding=1, stride=2),
             nn.ReLU(),
-            nn.Conv2d(32, 32, (3, 3), padding=0, stride=1), #GERAAAARD AQUÍ NO SERIA 16, 32 ?????????
+            nn.Conv2d(16, 32, (3, 3), padding=0, stride=1), 
             nn.ReLU(),
-            nn.Conv2d(32, 32, (3, 3), padding=1, stride=2)  #HAY QUE AÑADIR UNA ÚLTIMA RELU DEL ÚLTIMO CONV2D ??????????
+            nn.Conv2d(32, 32, (3, 3), padding=1, stride=2),
+            nn.ReLU()  
             #model.add(InputLayer(input_shape=(None, None, 1)))
             #model.add(Conv2D(8, (3, 3), activation='relu', padding='same', strides=2))
             #model.add(Conv2D(8, (3, 3), activation='relu', padding='same'))
