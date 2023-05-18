@@ -48,7 +48,7 @@ def model_pipeline(cfg:dict) -> None:
     return model
 '''
 
-# prueba pushhhhhhhhhhhh tururu
+# YEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEY
 if __name__ == "__main__":
     #wandb.login()
 
