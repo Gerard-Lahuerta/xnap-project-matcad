@@ -53,7 +53,7 @@ if __name__ == "__main__":
     #wandb.login()
 
     config = dict(
-        epochs=5,
+        epochs=1000,
         classes=10,
         kernels=[16, 32],
         batch_size=128,
