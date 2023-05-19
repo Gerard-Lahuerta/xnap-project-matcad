@@ -32,16 +32,22 @@ class Model1(nn.Module):
 
         self.encoder = nn.Sequential(
             nn.Conv2d(1, 8, (3, 3), padding=1, stride=2),
+            print("1"),
             nn.ReLU(),
-            nn.Conv2d(8, 8, (3, 3), padding=0, stride=1),
+            nn.Conv2d(8, 8, (3, 3), padding=1, stride=1),
+            print("2"),
             nn.ReLU(),
-            nn.Conv2d(8, 16, (3, 3), padding=0, stride=1),
+            nn.Conv2d(8, 16, (3, 3), padding=1, stride=1),
+            print("3"),
             nn.ReLU(),
             nn.Conv2d(16, 16, (3, 3), padding=1, stride=2),
+            print("4"),
             nn.ReLU(),
-            nn.Conv2d(16, 32, (3, 3), padding=0, stride=1), 
+            nn.Conv2d(16, 32, (3, 3), padding=1, stride=1), 
+            print("5"),
             nn.ReLU(),
             nn.Conv2d(32, 32, (3, 3), padding=1, stride=2),
+            print("6"),
             nn.ReLU()  
             #model.add(InputLayer(input_shape=(None, None, 1)))
             #model.add(Conv2D(8, (3, 3), activation='relu', padding='same', strides=2))
@@ -54,13 +60,13 @@ class Model1(nn.Module):
 
         self.decoder = nn.Sequential(
             nn.MaxUnpool2d(2,2),
-            nn.Conv2d(32, 32, (3,3), padding = 0, stride = 1),
+            nn.Conv2d(32, 32, (3,3), padding = 1, stride = 1),
             nn.ReLU(),
             nn.MaxUnpool2d((2,2)),
-            nn.Conv2d(32,32, (3,3), padding = 0, stride = 1),
+            nn.Conv2d(32,32, (3,3), padding = 1, stride = 1),
             nn.ReLU(),
             nn.MaxUnpool2d((2,2)),
-            nn.Conv2d(32, 2, (3,3), padding = 0, stride = 1),
+            nn.Conv2d(32, 2, (3,3), padding = 1, stride = 1),
             nn.Tanh()
             #model.add(UpSampling2D((2, 2)))
             #model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))

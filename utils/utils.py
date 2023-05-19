@@ -56,8 +56,8 @@ def get_data_model_1(path):
     transform = transforms.ToTensor()
 
     # Convert the image to PyTorch tensor
-    tensor = transform(imgGray)[:,:,0]
-    X = tensor.reshape(1, 400, 400, 1)
+    tensor = transform(imgGray)
+    X = tensor.reshape(1, 400, 400, 1)[:,:,0]
 
     return X
 
@@ -82,7 +82,7 @@ def make(model_type, config, device = "cuda"):
     if model_type == "Model 1":
         train = get_data_model_1("data/data_1/woman.jpg")
         test = get_data_model_1("data/data_1/man.jpg")
-        model = Model1()#.to(device)
+        model = Model1().to(device)
         criterion = nn.MSELoss()
     else:
         assert(False)
