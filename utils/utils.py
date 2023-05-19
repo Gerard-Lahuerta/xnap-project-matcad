@@ -8,6 +8,7 @@ import matplotlib as plt
 from torchvision.utils import make_grid
 from PIL import Image
 import os
+import numpy as np
 
 def get_data(slice=1, train=True):
     full_dataset = torchvision.datasets.MNIST(root=".",
