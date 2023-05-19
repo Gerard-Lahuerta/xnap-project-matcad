@@ -94,7 +94,7 @@ def make(model_type, config, device = "cuda"):
         train = get_data_model_1("data/data_1/woman.jpg")
         test = get_data_model_1("data/data_1/man.jpg")
         model = Model1().to(device)
-        criterion = nn.MSELoss()
+        criterion = torch.nn.MSELoss()
     else:
         assert(False)
 
