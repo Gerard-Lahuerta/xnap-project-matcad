@@ -60,8 +60,9 @@ def test_model1(model, test, label, criterion, device="cuda", save:bool= True):
     #show_image(output)
 
     cur = np.zeros((400, 400, 3))
-    cur[:,:,0] = test[0][0,:,:].cpu()
-    cur[:,:,1:] = output[0].cpu()
+    cur[:,:,0] = np.array(test[0][0,:,:].cpu())
+    cur[:,:,1:] = np.array(128*output[0].cpu().permute(2,1,0))
+
     imsave("img_result.png", lab2rgb(cur))
     imsave("img_gray_version.png", rgb2gray(lab2rgb(cur)))
 

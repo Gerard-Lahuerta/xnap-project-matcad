@@ -61,11 +61,11 @@ def lba_exclusion(image, channel):
 def get_data_model_1(path):
     rgb = io.imread(path)
     
-    lab = color.rgb2lab(rgb[:,:,0:3])
+    lab = color.rgb2lab(1.0/255*rgb[:,:,0:3])
     lab = np.array(lab, dtype = "float")
 
     X = lba_exclusion(lab, "L")
-    Y = lba_exclusion(lab, "AB")
+    Y = lba_exclusion(lab, "AB")/128
 
     # Define a transform to convert the image to tensor
     transform = transforms.ToTensor()

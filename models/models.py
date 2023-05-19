@@ -61,11 +61,11 @@ class Model1(nn.Module):
         )
     
     def forward(self, x):
-        print(x.shape)
+        #print(x.shape)
         x = self.encoder(x)
-        print(x.shape)
+        #print(x.shape)
         x = self.decoder(x)
-        print(x.shape)
+        #print(x.shape)
         return x
 
 class Model2(nn.Module):

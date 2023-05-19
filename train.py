@@ -26,7 +26,7 @@ def train_batch(image, label, model, optimizer, criterion, device="cuda"):
     images, labels = image.to(device), label.to(device)
 
     # Forward pass ➡
-    print(image.shape)
+    #print(image.shape)
     outputs = model(images)
 
     loss = criterion(outputs, labels)
