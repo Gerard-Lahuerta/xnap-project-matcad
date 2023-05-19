@@ -9,6 +9,7 @@ from torchvision.utils import make_grid
 from PIL import Image
 import os
 import numpy as np
+import torchvision.transforms.functional as F
 
 def get_data(slice=1, train=True):
     full_dataset = torchvision.datasets.MNIST(root=".",
@@ -51,14 +52,23 @@ def make(config, device="cuda"):
 
 def get_data_model_1(path):
     image = Image.open(path)
-    imgGray = image.convert('L')
 
-    # Define a transform to convert the image to tensor
-    transform = transforms.ToTensor()
+    image = np.array(image, dtype="float")
 
-    # Convert the image to PyTorch tensor
-    tensor = transform(imgGray)
-    X = tensor.reshape(1, 400, 400, 1)[:,:,0]
+    # Convert RGB image to LAB color space and normalize
+    image_tensor = F.to_tensor(image)
+    image_tensor = image_tensor.unsqueeze(0)  # Add batch dimension
+    image_tensor = image_tensor.permute(0, 2, 3, 1)  # Reshape to (1, height, width, 3)
+    image_tensor = image_tensor * (1.0 / 255)  # Normalize to [0, 1]
+    image_lab = torch.from_numpy(torchvision.color.rgb2lab(image_tensor.numpy())[0])
+
+    # Split L channel and normalize
+    X = image_lab[:, :, 0].unsqueeze(0)  # Extract L channel and add batch dimension
+    X = X.unsqueeze(3)  # Add channel dimension
+    X /= 50  # Normalize to [-1, 1]
+
+    # Reshape to match the expected input shape
+    X = X.permute(0, 2, 1, 3)  # Reshape to (1, height, width, 1)
 
     return X
 
