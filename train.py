@@ -56,7 +56,7 @@ def train_model(model, image, label, criterion, optimizer, config):
     model.train()
 
     # Run training and track with wandb
-    total_batches = config["epochs"]
+
     batch_ct = 0
     for epoch in tqdm(range(config["epochs"])):
         loss = train_batch(image, label, model, optimizer, criterion)
