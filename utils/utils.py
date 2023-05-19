@@ -58,7 +58,8 @@ def get_data_model_1(path):
 
     # Convert the image to PyTorch tensor
     tensor = transform(imgGray)
-    X = tensor.reshape(1, 400, 400, 1)[:,:,0]
+    X = tensor.reshape(1, 1, 400, 400)[:,:,0]
+
 
     return X
 

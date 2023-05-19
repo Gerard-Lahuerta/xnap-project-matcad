@@ -43,13 +43,6 @@ class Model1(nn.Module):
             nn.ReLU(),
             nn.Conv2d(32, 32, (3, 3), padding=1, stride=2),
             nn.ReLU()  
-            #model.add(InputLayer(input_shape=(None, None, 1)))
-            #model.add(Conv2D(8, (3, 3), activation='relu', padding='same', strides=2))
-            #model.add(Conv2D(8, (3, 3), activation='relu', padding='same'))
-            #model.add(Conv2D(16, (3, 3), activation='relu', padding='same'))
-            #model.add(Conv2D(16, (3, 3), activation='relu', padding='same', strides=2))
-            #model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
-            #model.add(Conv2D(32, (3, 3), activation='relu', padding='same', strides=2))
         )
 
         self.decoder = nn.Sequential(
@@ -60,20 +53,12 @@ class Model1(nn.Module):
             nn.Conv2d(32,16, (3,3), padding = 1, stride = 1),
             nn.ReLU(),
             nn.Upsample(scale_factor= 2, mode = "nearest"),            
-            nn.Conv2d(16, 2, (3,3), padding = 1, stride = 1),
+            nn.Conv2d(16, 1, (3,3), padding = 1, stride = 1),
             nn.Tanh()
-            #model.add(UpSampling2D((2, 2)))
-            #model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
-            #model.add(UpSampling2D((2, 2)))
-            #model.add(Conv2D(16, (3, 3), activation='relu', padding='same'))
-            #model.add(UpSampling2D((2, 2)))
-            #model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
         )
     
     def forward(self, x):
-        print(type(x))
         x = self.encoder(x)
-        print(type(x))
         x = self.decoder(x)
         return x
 
@@ -102,18 +87,8 @@ class Model2(nn.Module):
             nn.ReLU()
         )
 
-        #model.add(InputLayer(input_shape=(256, 256, 1)))
-        #model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-        #model.add(Conv2D(64, (3, 3), activation='relu', padding='same', strides=2))
-        #model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
-        #model.add(Conv2D(128, (3, 3), activation='relu', padding='same', strides=2))
-        #model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
-        #model.add(Conv2D(256, (3, 3), activation='relu', padding='same', strides=2))
-        #model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
-        #model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
-        #model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
 
-        self.decoder = nn.Sequential( # LOS NÚMEROS DE LOS CONV2D ME LOS SAQUÉ DE AHÍ LA VDAD NS SI TAN BÉ
+        self.decoder = nn.Sequential( 
             nn.MaxUnpool2d(2, 2),
             nn.Conv2d(64, 64, (3,3), padding=0, stride=1),
             nn.ReLU(),
@@ -125,12 +100,7 @@ class Model2(nn.Module):
             nn.MaxUnpool2d(2,2)
         )
 
-        #model.add(UpSampling2D((2, 2)))
-        #model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-        #model.add(UpSampling2D((2, 2)))
-        #model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
-        #model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
-        #model.add(UpSampling2D((2, 2)))
+
     def forward(self, x):
         x = self.encoder(x)
         x = self.decoder(x)

@@ -24,29 +24,20 @@ def train(model, loader, criterion, optimizer, config):
 
 def train_batch(image, label, model, optimizer, criterion, device="cuda"):
     images, labels = image.to(device), label.to(device)
-    
-    print("uf")
+
+    print(images.shape)
 
     # Forward pass ➡
     outputs = model(images)
 
-    print(outputs.size())
-    print(labels.size())
-
     loss = criterion(outputs, labels)
-    
-    print("que")
 
     # Backward pass ⬅
     optimizer.zero_grad()
     loss.backward()
 
-    print("rico")
-
     # Step with optimizer
     optimizer.step()
-
-    print("mami")
 
     return loss
 
@@ -59,7 +50,7 @@ def train_log(loss, example_ct, epoch):
 
 ############################################################################################
 
-def train_model(model, image, criterion, optimizer, config):
+def train_model(model, image, label, criterion, optimizer, config):
     # Tell wandb to watch what the model gets up to: gradients, weights, and more!
     #wandb.watch(model, criterion, log="all", log_freq=10)
 
@@ -69,9 +60,8 @@ def train_model(model, image, criterion, optimizer, config):
     total_batches = config["epochs"]
     batch_ct = 0
     for epoch in tqdm(range(config["epochs"])):
-        loss = train_batch(image, image, model, optimizer, criterion)
+        loss = train_batch(image, label, model, optimizer, criterion)
         batch_ct += 1
-        print("hola")
 
         # Report metrics every 25th batch
         if ((batch_ct + 1) % 25) == 0:
