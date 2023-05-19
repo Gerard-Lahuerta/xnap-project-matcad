@@ -9,7 +9,6 @@ from torchvision.utils import make_grid
 from PIL import Image
 import os
 import numpy as np
-
 from skimage import io, color
 
 def get_data(slice=1, train=True):
