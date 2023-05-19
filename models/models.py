@@ -46,7 +46,7 @@ class Model1(nn.Module):
         )
 
         self.decoder = nn.Sequential(
-            nn.Upsample(scale_factor= 2),
+            nn.Upsample(scale_factor= 2), #bilinear, nearest, bicubic
             #nn.MaxUnpool2d(2, stride=1),
             nn.ConvTranspose2d(32, 32, (3,3), padding=1, stride = 1),
             nn.ReLU(),
