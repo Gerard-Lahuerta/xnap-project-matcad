@@ -61,7 +61,7 @@ def get_data_model_1(path):
     X = tensor.reshape(1, 1, 400, 400)[:,:,0]
 
 
-    return X
+    return [X, transform(image)]
 
 def get_data_model_2(path):
     Xaux = []

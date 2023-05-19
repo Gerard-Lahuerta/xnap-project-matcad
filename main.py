@@ -66,7 +66,7 @@ if __name__ == "__main__":
     model, train_loader, test_loader, criterion, optimizer = make(model_type="Model 1", config=config)
 
     # and use them to train the model
-    train_model(model, train_loader, test_loader, criterion, optimizer, config)
+    train_model(model, train_loader[0], train_loader[1], criterion, optimizer, config)
 
     # and test its final performance
-    test(model, test_loader)
+    test_model1(model, test_loader[0], test_loader[1], criterion)

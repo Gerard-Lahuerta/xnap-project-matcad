@@ -25,8 +25,6 @@ def train(model, loader, criterion, optimizer, config):
 def train_batch(image, label, model, optimizer, criterion, device="cuda"):
     images, labels = image.to(device), label.to(device)
 
-    print(images.shape)
-
     # Forward pass ➡
     outputs = model(images)
 

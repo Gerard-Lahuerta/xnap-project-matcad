@@ -38,18 +38,22 @@ def test(model, test_loader, device="cuda", save:bool= True):
 ########################################################################################################################
 
 
-def test(model, test, epoch, epochs, criterion, device="cuda", save:bool= True):
+def test_model1(model, test, label, criterion, device="cuda", save:bool= True):
     model.eval()
-    
+
+    test = test.to(device)
+    label = label.to(device)
+
+
     with torch.no_grad():
         output = model(test)
     
     # compute training reconstruction loss
-    loss = criterion(output, test)
+    loss = criterion(output, label)
     
     # display the epoch training loss
     print("Test loss = {:.6f}".format(loss))
-    show_image(test)
+    show_image(label)
     show_image(output)
         
     wandb.log({"Loss": loss})
