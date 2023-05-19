@@ -103,6 +103,7 @@ def make(model_type, config, device = "cuda"):
         assert(False)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=config["learning_rate"])
+    #optimizer = torch.optim.RMSprop(model.parameters(), lr=config["learning_rate"])
 
     return model, train, test, criterion, optimizer
 

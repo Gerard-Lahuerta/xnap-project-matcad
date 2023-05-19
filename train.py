@@ -63,5 +63,5 @@ def train_model(model, image, label, criterion, optimizer, config):
         batch_ct += 1
 
         # Report metrics every 25th batch
-        if ((batch_ct + 1) % 25) == 0:
-            print(f"Loss after {str(batch_ct).zfill(5)} examples: {loss:.3f}")
+        #if ((batch_ct + 1) % 25) == 0:
+         #   print(f"Loss after {str(batch_ct).zfill(5)} examples: {loss:.3f}")
