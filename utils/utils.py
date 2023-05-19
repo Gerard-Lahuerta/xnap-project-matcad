@@ -4,11 +4,13 @@ import torch.nn
 import torchvision
 import torchvision.transforms as transforms
 from models.models import *
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from torchvision.utils import make_grid
 from PIL import Image
 import os
 import numpy as np
+
+from skimage import io, color
 
 def get_data(slice=1, train=True):
     full_dataset = torchvision.datasets.MNIST(root=".",
@@ -49,19 +51,31 @@ def make(config, device="cuda"):
     
 ###################################################################################
 
+def lba_exclusion(image, channel):
+    out = image
+    if channel == 'L':
+        return out[:, :, 0]
+    else:
+        return out[:, :, 1:]
+
+
 def get_data_model_1(path):
-    image = Image.open(path)
-    imgGray = image.convert('L')
+    rgb = io.imread(path)
+    
+    lab = color.rgb2lab(rgb[:,:,0:3])
+    lab = np.array(lab, dtype = "float")
+
+    X = lba_exclusion(lab, "L")
+    Y = lba_exclusion(lab, "AB")
 
     # Define a transform to convert the image to tensor
     transform = transforms.ToTensor()
 
     # Convert the image to PyTorch tensor
-    tensor = transform(imgGray)
-    X = tensor.reshape(1, 1, 400, 400)[:,:,0]
+    X = transform(X).float()
+    Y = transform(Y).float()
 
-
-    return [X, transform(image)]
+    return [X, Y]
 
 def get_data_model_2(path):
     Xaux = []
@@ -103,5 +117,8 @@ def plot_image(img):
 
 
 def show_image(img):
-    plot_image(make_grid(img.detach().cpu().view(-1, 1, 28, 28).transpose(2, 3), nrow=2, normalize = True))
-    plot_image(make_grid(img.detach().cpu().view(-1, 1, 28, 28).transpose(2, 3), nrow=2, normalize = True))   
+    print(img.shape)
+    grid = make_grid(img.detach().cpu().view(-1, 1, 400, 400).transpose(2, 3), 
+                     nrow=2, 
+                     normalize = True)
+    plot_image(grid)   

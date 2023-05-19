@@ -53,13 +53,16 @@ class Model1(nn.Module):
             nn.Conv2d(32,16, (3,3), padding = 1, stride = 1),
             nn.ReLU(),
             nn.Upsample(scale_factor= 2, mode = "nearest"),            
-            nn.Conv2d(16, 1, (3,3), padding = 1, stride = 1),
+            nn.Conv2d(16, 2, (3,3), padding = 1, stride = 1),
             nn.Tanh()
         )
     
     def forward(self, x):
+        print(x.shape)
         x = self.encoder(x)
+        print(x.shape)
         x = self.decoder(x)
+        print(x.shape)
         return x
 
 class Model2(nn.Module):

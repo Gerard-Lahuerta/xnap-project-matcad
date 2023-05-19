@@ -26,6 +26,7 @@ def train_batch(image, label, model, optimizer, criterion, device="cuda"):
     images, labels = image.to(device), label.to(device)
 
     # Forward pass ➡
+    print(image.shape)
     outputs = model(images)
 
     loss = criterion(outputs, labels)
@@ -52,7 +53,7 @@ def train_model(model, image, label, criterion, optimizer, config):
     # Tell wandb to watch what the model gets up to: gradients, weights, and more!
     #wandb.watch(model, criterion, log="all", log_freq=10)
 
-    #model.train()
+    model.train()
 
     # Run training and track with wandb
     total_batches = config["epochs"]
