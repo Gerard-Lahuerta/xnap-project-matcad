@@ -39,7 +39,7 @@ class Model1(nn.Module):
             nn.ReLU(),
             nn.Conv2d(16, 16, (3, 3), padding=1, stride=2),
             nn.ReLU(),
-            nn.Conv2d(16, 32, (3, 3), padding=1, stride=1), 
+            nn.Conv2d(16, 32, (3, 3), padding=1, stride=1),
             nn.ReLU(),
             nn.Conv2d(32, 32, (3, 3), padding=1, stride=2),
             nn.ReLU()  
@@ -48,15 +48,15 @@ class Model1(nn.Module):
         self.decoder = nn.Sequential(
             nn.Upsample(scale_factor= 2),
             #nn.MaxUnpool2d(2, stride=1),
-            nn.ConvTranspose2d(32, 32, (3,3), padding = 1, stride = 1),
+            nn.ConvTranspose2d(32, 32, (3,3), padding=1, stride = 1),
             nn.ReLU(),
             nn.Upsample(scale_factor= 2),
             #nn.MaxUnpool2d(2, stride=1),
-            nn.ConvTranspose2d(32,16, (3,3), padding = 1, stride = 1),
+            nn.ConvTranspose2d(32,16, (3,3), padding=1, stride = 1),
             nn.ReLU(),
             nn.Upsample(scale_factor= 2),
             #nn.MaxUnpool2d(2, stride=1),
-            nn.ConvTranspose2d(16, 2, (3,3), padding = 1, stride = 1),
+            nn.ConvTranspose2d(16, 2, (3,3), padding=1, stride = 1),
             nn.Tanh()
         )
     
@@ -64,7 +64,6 @@ class Model1(nn.Module):
         print(x.shape)
         x = self.encoder(x)
         print(x.shape)
-        print("tururu")
         x = self.decoder(x)
         print(x.shape)
         return x

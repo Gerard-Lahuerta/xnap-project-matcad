@@ -71,8 +71,8 @@ def get_data_model_1(path):
     transform = transforms.ToTensor()
 
     # Convert the image to PyTorch tensor
-    X = transform(X).float()
-    Y = transform(Y).float()
+    X = transform(X).float().reshape(1,1,400,400)
+    Y = transform(Y).float().reshape(1,2,400,400)
 
     return [X, Y]
 

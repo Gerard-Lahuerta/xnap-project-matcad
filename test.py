@@ -53,7 +53,7 @@ def test_model1(model, test, label, criterion, device="cuda", save:bool= True):
 
     # display the epoch training loss
     print("Test loss = {:.6f}".format(loss))
-    #show_image(label)
+    show_image(label)
     show_image(output)
-        
-    wandb.log({"Loss": loss})
+
+    #wandb.log({"Loss": loss})
