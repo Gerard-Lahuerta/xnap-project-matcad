@@ -10,6 +10,7 @@ from PIL import Image
 import os
 import numpy as np
 from skimage import io, color
+from skimage.color import rgb2lab
 
 def get_data(slice=1, train=True):
     full_dataset = torchvision.datasets.MNIST(root=".",
@@ -90,7 +91,37 @@ def get_data_model_2(path):
 
     split = int(0.95 * len(X))
     Xtrain = X[:split]
+    #print(X)
     return Xtrain
+
+def get_data_model_3(path):
+    Xaux = []
+    X = []
+    # path = ruta a la carpeta on es troben totes les imatges pel TRAIN
+    for filename in os.listdir(path):
+        Xaux.append(Image.open(path + filename))
+    for image in Xaux:
+        image = image.convert('L')
+        transform = transforms.ToTensor()
+        image = transform(image)
+        X.append(image)
+
+    #split = int(0.95 * len(X))
+    #Xtrain = X[:split]
+    #print(X)
+    return X
+
+def get_test_data_model_2(path):
+    X = []
+    for filename in os.listdir(path):
+        img = Image.open(path + filename)
+        X.append(np.array(img).astype(float))
+    X = np.array(X)
+
+    X = rgb2lab(1.0/255 * X)[:,:,:,0]
+    X = np.reshape(X, X.shape + (1,))
+    #print(X)
+    return X
 
 def make(model_type, config, device = "cuda"):
 
@@ -98,10 +129,18 @@ def make(model_type, config, device = "cuda"):
         train = get_data_model_1("data/data_1/woman.jpg")
         test = get_data_model_1("data/data_1/woman.jpg")
         model = Model1().to(device)
-        criterion = torch.nn.MSELoss()
+    elif model_type == "Model 2":
+        train = get_data_model_2("data/data_2_3/Train/")
+        test = get_test_data_model_2("data/data_2_3/Test/")
+        model = Model2().to(device)
+    elif model_type == "Model 3":
+        train = get_data_model_3("data/data_2_3/Train/")
+        model = Model3().to(device) # por hacer
+        ### more things
     else:
         assert(False)
 
+    criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=config["learning_rate"])
     #optimizer = torch.optim.RMSprop(model.parameters(), lr=config["learning_rate"])
 

@@ -2,7 +2,7 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Remote Python 3.8.16 (sftp://xnmaster@ml-lab-f16b9785-93b3-4cf9-952d-b7314da22250.westeurope.cloudapp.azure.com:49507/home/xnmaster/.virtualenvs/xnap-project-matcad_grup_6/bin/python)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

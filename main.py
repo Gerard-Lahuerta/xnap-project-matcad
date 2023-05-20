@@ -8,6 +8,7 @@ import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
 
+import utils.utils
 from train import *
 from test import *
 from utils.utils import *
@@ -63,10 +64,16 @@ if __name__ == "__main__":
     
     #model = model_pipeline(config)
 
-    model, train_loader, test_loader, criterion, optimizer = make(model_type="Model 1", config=config)
+    model, train_loader, test_loader, criterion, optimizer = make(model_type="Model 2", config=config)
 
     # and use them to train the model
     train_model(model, train_loader[0], train_loader[1], criterion, optimizer, config)
 
     # and test its final performance
-    test_model1(model, test_loader[0], test_loader[1], criterion)
+    #test_model1(model, test_loader[0], test_loader[1], criterion)
+    test_model2(model, test_loader, criterion)
+
+"""
+if __name__ == "__main__":
+    X = utils.utils.get_test_data_model_2("data/data_2_3/Test/")
+"""

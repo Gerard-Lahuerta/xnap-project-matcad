@@ -93,7 +93,6 @@ class Model2(nn.Module):
             nn.ReLU()
         )
 
-
         self.decoder = nn.Sequential( 
             nn.MaxUnpool2d(2, 2),
             nn.Conv2d(64, 64, (3,3), padding=0, stride=1),
@@ -106,7 +105,11 @@ class Model2(nn.Module):
             nn.MaxUnpool2d(2,2)
         )
 
-
     def forward(self, x):
         x = self.encoder(x)
         x = self.decoder(x)
+        return x
+
+class Model3(nn.Module):
+    pass
+    # por hacer
