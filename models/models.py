@@ -170,3 +170,6 @@ class Model3(nn.Module):
         x = self.fusion(x, embedding)
         x = self.decoder(x)
         return x
+    
+    def get_name(self):
+        return self.name
