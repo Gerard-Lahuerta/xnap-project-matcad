@@ -80,21 +80,27 @@ def get_data_model_1(path):
     return [X, Y]
 
 def get_data_model_2(path):
-    Xaux = []
+
     X = []
-    # path = ruta a la carpeta on es troben totes les imatges
     for filename in os.listdir(path):
-        Xaux.append(Image.open(path + filename))
-    for image in Xaux:
-        image = image.convert('L')
-        transform = transforms.ToTensor()
-        image = transform(image)
-        X.append(image)
+        image = Image.open(os.path.join(path, filename))
+        tensor_image = image.ToTensor()
+        X.append(tensor_image)
+
+    X = torch.stack(X)
+    X = X.float()
+    X = X / 255.0
 
     split = int(0.95 * len(X))
+
     Xtrain = X[:split]
-    #print(X)
-    return Xtrain
+
+    Xtest = color.rgb2lab(X[split:])[:,:,:,0]
+    Xtest = Xtest.reshape(Xtest.shape+(1,))
+    Ytest = color.rgb2lab(X[split:])[:, :, :, 1:]
+    Ytest = Ytest / 128
+
+    return Xtrain, Xtest, Ytest
 
 def get_data_model_3(path):
     Xaux = []
