@@ -1,6 +1,5 @@
 import wandb
 import torch
-from utils.utils import show_image
 from skimage.io import imsave
 from skimage.color import rgb2lab, lab2rgb, rgb2gray
 import numpy as np
@@ -41,12 +40,14 @@ def test(model, test_loader, device="cuda", save:bool= True):
 ########################################################################################################################
 
 
-def test(model):
+def test(model, test_loader, save:bool = True):
 
     if model.get_name() == "Model 1":
         test_model = test_model_1
+        size = 400
     elif model.get_name() == "Model 2":
         test_model = test_model_2
+        size = 256
     elif model.get_name() == "Model 3":
         test_model = test_model_3
     else:
@@ -55,25 +56,19 @@ def test(model):
     model.eval()
 
     with torch.no_grad():
-        correct, total = 0, 0
-        for images, labels in test_loader:
-            images, labels = images.to(device), labels.to(device)
-            outputs = model(images)
-            _, predicted = torch.max(outputs.data, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
+        output, loss = test_model()
+        print("Test loss = {:.6f}".format(loss))
+        #wandb.log({"Loss": loss})
 
-        print(f"Accuracy of the model on the {total} " +
-              f"test images: {correct / total:%}")
-        
-        wandb.log({"test_accuracy": correct / total})
+    if save:
+        save_image(output, size)
 
 
-def test_model_1(model, test, label, criterion, device="cuda", save:bool= True):
+def test_model_1(model, test_loader, criterion, device="cuda"):
     model.eval()
 
-    test = test.to(device)
-    label = label.to(device)
+    test = test_loader[0].to(device)
+    label = test_loader[1].to(device)
 
     with torch.no_grad():
         output = model(test)
@@ -81,16 +76,12 @@ def test_model_1(model, test, label, criterion, device="cuda", save:bool= True):
     # compute training reconstruction loss
     loss = criterion(output, label)
 
-    # display the epoch training loss
-    print("Test loss = {:.6f}".format(loss))
-
     if(save):
         cur = np.zeros((400, 400, 3))
         cur[:,:,0] = np.array(test[0][0,:,:].cpu())
         cur[:,:,1:] = np.array(128*output[0].cpu().permute(2,1,0))
         imsave("results/"+model.get_name()+"/img_result.png", (lab2rgb(cur)*255).astype(np.uint8))
         imsave("results/"+model.get_name()+"/img_gray_version.png", ((rgb2gray(lab2rgb(cur)))*255).astype(np.uint8))
-    #wandb.log({"Loss": loss})
 
 
 def test_model_2(model, test, criterion, device="cuda", save: bool = True):

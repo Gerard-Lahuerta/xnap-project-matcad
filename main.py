@@ -70,5 +70,5 @@ if __name__ == "__main__":
     train_model(model, train_loader, criterion, optimizer, config)
 
     # and test its final performance
-    test_model1(model, test_loader[0], test_loader[1], criterion)
+    test_model_1(model, test_loader[0], test_loader[1], criterion)
     #test_model2(model, test_loader, criterion)
