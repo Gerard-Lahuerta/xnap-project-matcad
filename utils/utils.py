@@ -104,6 +104,7 @@ def get_data_model_2(path):
 
 def get_data_model_3(path):
     Xaux = []
+    
     X = []
     # path = ruta a la carpeta on es troben totes les imatges pel TRAIN
     for filename in os.listdir(path):
