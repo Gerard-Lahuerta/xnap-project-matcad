@@ -58,10 +58,11 @@ def train_model(model, image, label, criterion, optimizer, config):
     # Run training and track with wandb
 
     batch_ct = 0
-    for epoch in tqdm(range(config["epochs"])):
+    epochs = tqdm(range(config["epochs"]), desc="Train: ")
+    for epoch in epochs:
         loss = train_batch(image, label, model, optimizer, criterion)
         batch_ct += 1
 
         # Report metrics every 25th batch
-        #if ((batch_ct + 1) % 25) == 0:
-         #   print(f"Loss after {str(batch_ct).zfill(5)} examples: {loss:.3f}")
+        if ((batch_ct + 1) % 25) == 0:
+            epochs.set_postfix({'Loss': f"{loss:.6f}"})

@@ -58,7 +58,7 @@ if __name__ == "__main__":
         classes=10,
         kernels=[16, 32],
         batch_size=128,
-        learning_rate=5e-3,
+        learning_rate=0.01,
         dataset="MNIST",
         architecture="CNN")
     

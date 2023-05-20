@@ -141,8 +141,10 @@ def make(model_type, config, device = "cuda"):
         assert(False)
 
     criterion = torch.nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=config["learning_rate"])
-    #optimizer = torch.optim.RMSprop(model.parameters(), lr=config["learning_rate"])
+    #optimizer = torch.optim.Adam(model.parameters(), lr=config["learning_rate"]) # <-- ñe
+    #optimizer = torch.optim.RMSprop(model.parameters(), lr=config["learning_rate"], momentum=0.9) # <-- una mierda tremenda
+    #optimizer = torch.optim.Adadelta(model.parameters(), lr=config["learning_rate"]) # <-- kk
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
     return model, train, test, criterion, optimizer
 
