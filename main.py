@@ -54,7 +54,7 @@ if __name__ == "__main__":
     #wandb.login()
 
     config = dict(
-        epochs=100,
+        epochs=1000,
         classes=10,
         kernels=[16, 32],
         batch_size=128,
@@ -70,5 +70,5 @@ if __name__ == "__main__":
     train_model(model, train_loader, criterion, optimizer, config)
 
     # and test its final performance
-    test_model_1(model, test_loader[0], test_loader[1], criterion)
+    test_model(model, test_loader, criterion)
     #test_model2(model, test_loader, criterion)

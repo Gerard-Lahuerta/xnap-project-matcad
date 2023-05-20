@@ -5,12 +5,14 @@ import torchvision
 import torchvision.transforms as transforms
 from models.models import *
 import matplotlib.pyplot as plt
-from torchvision.utils import make_grid
+
 from PIL import Image
 import os
 import numpy as np
 from skimage import io, color
-from skimage.color import rgb2lab
+
+from skimage.io import imsave
+from skimage.color import rgb2lab, lab2rgb, rgb2gray
 
 def get_data(slice=1, train=True):
     full_dataset = torchvision.datasets.MNIST(root=".",
@@ -144,14 +146,15 @@ def make(model_type, config, device = "cuda"):
     #optimizer = torch.optim.Adam(model.parameters(), lr=config["learning_rate"]) # <-- ñe
     #optimizer = torch.optim.RMSprop(model.parameters(), lr=config["learning_rate"], momentum=0.9) # <-- una mierda tremenda
     #optimizer = torch.optim.Adadelta(model.parameters(), lr=config["learning_rate"]) # <-- kk
-    #optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
-    optimizer = torch.optim.Adagrad(model.parameters(), lr = 0.01)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+    #optimizer = torch.optim.Adagrad(model.parameters(), lr = 0.01)
 
     return model, train, test, criterion, optimizer
  
 
-def save_image(output, size):
-    cur = np.zeros((400, 400, 3))
-    cur[:,:,0] = np.array(output[0][0,:,:].cpu())
-    cur[:,:,1:] = np.array(128*output[1].cpu().permute(2,1,0))
-    imsave("results/"+model.get_name()+"/img_result.png", (lab2rgb(cur)*255).astype(np.uint8))
+def save_image(output_AB, output_L, size, path):
+    for AB, L, i in zip(output_AB, output_L, range(len(output_AB))):
+        cur = np.zeros((size, size, 3))
+        cur[:,:,0] = np.array(L[0][0,:,:].cpu())
+        cur[:,:,1:] = np.array(128*AB[0].cpu().permute(2,1,0))
+        imsave(path+"/img_"+str(i+1)+".png", (lab2rgb(cur)*255).astype(np.uint8))

@@ -4,6 +4,8 @@ from skimage.io import imsave
 from skimage.color import rgb2lab, lab2rgb, rgb2gray
 import numpy as np
 
+from utils.utils import save_image
+
 '''
 def test(model, test_loader, device="cuda", save:bool= True):
     # Run the model on some test examples
@@ -40,7 +42,7 @@ def test(model, test_loader, device="cuda", save:bool= True):
 ########################################################################################################################
 
 
-def test(model, test_loader, save:bool = True):
+def test_model(model, test_loader, criterion, save:bool = True):
 
     if model.get_name() == "Model 1":
         test_model = test_model_1
@@ -56,16 +58,16 @@ def test(model, test_loader, save:bool = True):
     model.eval()
 
     with torch.no_grad():
-        output, loss = test_model()
+        output_AB, output_L, loss = test_model(model, test_loader, criterion)
         print("Test loss = {:.6f}".format(loss))
         #wandb.log({"Loss": loss})
 
     if save:
-        save_image(output, size)
+        path = "results/"+model.get_name()
+        save_image(output_AB, output_L, size, path)
 
 
 def test_model_1(model, test_loader, criterion, device="cuda"):
-    model.eval()
 
     test = test_loader[0].to(device)
     label = test_loader[1].to(device)
@@ -75,14 +77,9 @@ def test_model_1(model, test_loader, criterion, device="cuda"):
     
     # compute training reconstruction loss
     loss = criterion(output, label)
-
-    if(save):
-        cur = np.zeros((400, 400, 3))
-        cur[:,:,0] = np.array(test[0][0,:,:].cpu())
-        cur[:,:,1:] = np.array(128*output[0].cpu().permute(2,1,0))
-        imsave("results/"+model.get_name()+"/img_result.png", (lab2rgb(cur)*255).astype(np.uint8))
-        imsave("results/"+model.get_name()+"/img_gray_version.png", ((rgb2gray(lab2rgb(cur)))*255).astype(np.uint8))
-
+   
+    return [output], [test], loss
+        
 
 def test_model_2(model, test, criterion, device="cuda", save: bool = True):
     model.eval()
