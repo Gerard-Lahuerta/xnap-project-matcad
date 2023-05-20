@@ -84,26 +84,23 @@ def test_model_1(model, test_loader, criterion, device="cuda"):
 def test_model_2(model, test, criterion, device="cuda", save: bool = True):
     model.eval()
 
-    testa = test[0].to(device)
-    label = test[1].to(device)
+    loss = 0
+    output = []
+    input = []
 
-    with torch.no_grad():
-        output = model(testa)
+    for L, AB in zip(test[0], test[1]):
+        X = L.to(device)
+        Y = AB.to(device)
 
-    # compute training reconstruction loss
-    loss = criterion(output, label)
+        with torch.no_grad():
+            out = model(X)
 
-    # display the epoch training loss
-    print("Test loss = {:.6f}".format(loss))
-    # show_image(label)
-    # show_image(output)
+        # compute training reconstruction loss
+        loss += criterion(out, Y)
+        input.append(X)
+        output.append(out)
 
-    for i in range(len(output)):
-        cur = np.zeros((256, 256, 3))
-        cur[:, :, 0] = test[i][:,:,0]
-        cur[:, :, 1:] = output[i]
-        imsave("result/img_" + str(i) + ".png", lab2rgb(cur))
-        # wandb.log({"Loss": loss})
+    return output, input, loss/len(test[0])
 
 
 def test_model_3():

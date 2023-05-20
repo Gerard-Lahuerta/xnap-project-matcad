@@ -99,14 +99,14 @@ def get_data_model_2(path, split = 0.95, train = True):
     Xtest = Xtest.reshape(Xtest.shape + (1,))
     aux = []
     for i in Xtest:
-        aux.append(transform(i).float())
+        aux.append(transform(i).float().reshape(1,1,256,256))
     Xtest = aux
 
     Ytest = color.rgb2lab(1.0 / 255 * np.array(X, dtype="float"))[:, :, :, 1:]
     Ytest = Ytest / 128
     aux = []
     for i in Ytest:
-        aux.append(transform(i).float())
+        aux.append(transform(i).float().reshape(1,2,256,256))
     Ytest = aux
 
     return [Xtest, Ytest]

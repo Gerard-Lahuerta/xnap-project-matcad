@@ -80,36 +80,36 @@ class Model2(nn.Module):
         self.name = "Model 2"
 
         self.encoder = nn.Sequential(
-            nn.Conv2d(1, 64, (3,3), padding=0, stride=1),
+            nn.Conv2d(1, 64, (3,3), padding=1, stride=1),
             nn.ReLU(),
             nn.Conv2d(64, 64, (3,3), padding=1, stride=2),
             nn.ReLU(),
-            nn.Conv2d(64, 128, (3,3), padding=0, stride=1),
+            nn.Conv2d(64, 128, (3,3), padding=1, stride=1),
             nn.ReLU(),
             nn.Conv2d(128, 128, (3,3), padding=1, stride=2),
             nn.ReLU(),
-            nn.Conv2d(128, 256, (3,3), padding=0, stride=1),
+            nn.Conv2d(128, 256, (3,3), padding=1, stride=1),
             nn.ReLU(),
             nn.Conv2d(256, 256, (3,3), padding=1, stride=2),
             nn.ReLU(),
-            nn.Conv2d(256, 512, (3,3), padding=0, stride=1),
+            nn.Conv2d(256, 512, (3,3), padding=1, stride=1),
             nn.ReLU(),
-            nn.Conv2d(512, 256, (3, 3), padding=0, stride=1),
+            nn.Conv2d(512, 256, (3, 3), padding=1, stride=1),
             nn.ReLU(),
-            nn.Conv2d(256, 128, (3,3), padding=0, stride=1),
+            nn.Conv2d(256, 128, (3,3), padding=1, stride=1),
             nn.ReLU()
         )
 
         self.decoder = nn.Sequential( 
-            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear"),
-            nn.ConvTranspose2d(64, 64, (3,3), padding=0, stride=1),
+            nn.Upsample(scale_factor= 2),
+            nn.ConvTranspose2d(128, 64, (3,3), padding=1, stride=1),
             nn.ReLU(),
-            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear"),
-            nn.ConvTranspose2d(32, 2, (3,3), padding=0, stride=1),
+            nn.Upsample(scale_factor= 2),
+            nn.ConvTranspose2d(64, 32, (3,3), padding=1, stride=1),
             nn.ReLU(),
-            nn.ConvTranspose2d(2, 2, (3,3), padding=0, stride=1),
+            nn.ConvTranspose2d(32, 2, (3,3), padding=1, stride=1),
             nn.Tanh(),
-            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear"),
+            nn.Upsample(scale_factor= 2),
         )
 
     def forward(self, x):

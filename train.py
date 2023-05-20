@@ -61,8 +61,17 @@ def train_batch_model_1(loader, model, optimizer, criterion, e_info, ct):
     return [ct[0]+1, ct[1]+1]
 
 
-def train_batch_model_2():
-    pass
+def train_batch_model_2(loader, model, optimizer, criterion, e_info, ct):
+    for images, labels in zip(loader[0], loader[1]):
+        loss = train_batch(images, labels, model, optimizer, criterion)
+        ct[1] += len(images)
+        ct[0] += 1
+
+        # Report metrics every 25th batch
+        if ((ct[0] + 1) % 25) == 0:
+            e_info[1].set_postfix({'Loss': f"{loss:.6f}"})
+            #train_log(loss, e_info[0], e_info[0])
+    return [ct[0], ct[1]]
 
 
 def train_batch_model_3():
