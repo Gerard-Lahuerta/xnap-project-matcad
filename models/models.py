@@ -101,21 +101,24 @@ class Model2(nn.Module):
         )
 
         self.decoder = nn.Sequential( 
-            nn.MaxUnpool2d(2, 2),
-            nn.Conv2d(64, 64, (3,3), padding=0, stride=1),
+            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear"),
+            nn.ConvTranspose2d(64, 64, (3,3), padding=0, stride=1),
             nn.ReLU(),
-            nn.MaxUnpool2d(2,2),
-            nn.Conv2d(32, 2, (3,3), padding=0, stride=1),
+            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear"),
+            nn.ConvTranspose2d(32, 2, (3,3), padding=0, stride=1),
             nn.ReLU(),
-            nn.Conv2d(2, 2, (3,3), padding=0, stride=1),
+            nn.ConvTranspose2d(2, 2, (3,3), padding=0, stride=1),
             nn.Tanh(),
-            nn.MaxUnpool2d(2,2)
+            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear"),
         )
 
     def forward(self, x):
         x = self.encoder(x)
         x = self.decoder(x)
         return x
+   
+    def get_name(self):
+        return self.name
 
 class Model3(nn.Module):
     def __init__(self):
