@@ -76,6 +76,8 @@ class Model1(nn.Module):
 class Model2(nn.Module):
     def __init__(self):
         super(Model2, self).__init__()
+        
+        self.name = "Model 2"
 
         self.encoder = nn.Sequential(
             nn.Conv2d(1, 64, (3,3), padding=0, stride=1),
@@ -116,5 +118,55 @@ class Model2(nn.Module):
         return x
 
 class Model3(nn.Module):
-    pass
-    # por hacer
+    def __init__(self):
+        super(Model3, self).__init__()
+        
+        self.name = "Model 3"
+
+        self.encoder = nn.Sequential(
+            nn.Conv2d(1, 64, (3,3), stride=2, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(64, 128, (3,3), stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(128, 128, (3,3), stride=2, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(128, 256, (3,3), stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(256, 256, (3,3), stride=2, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(256, 512, (3,3), stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, (3,3), stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(512, 256, (3,3), stride=1, padding=1),
+            nn.ReLU()
+        )
+
+        self.decoder = nn.Sequential(
+            nn.ConvTranspose2d(256+1000, 256, (1,1), stride=1, padding=0),
+            nn.ReLU(),
+            nn.ConvTranspose2d(256, 128, (3,3)),
+            nn.ReLU(),
+            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear"),
+            nn.ConvTranspose2d(128, 64, (3,3)),
+            nn.ReLU(),
+            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear"),
+            nn.ConvTranspose2d(64, 32, (3,3)),
+            nn.ReLU(),
+            nn.ConvTranspose2d(32, 16, (3,3)),
+            nn.ReLU(),
+            nn.ConvTranspose2d(16, 2, (3,3)),
+            nn.Tanh(),
+            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear")
+        )
+
+    def fusion(x, embedding):
+        embedding = embedding.view(embedding.size(0), embedding.size(1), 1, 1)
+        embedding = embedding.repeat(1, 1, 32, 32)
+        return torch.cat((x, embedding), dim=1)
+
+    def forward(self, x, embedding):
+        x = self.encoder(x)
+        x = self.fusion(x, embedding)
+        x = self.decoder(x)
+        return x
