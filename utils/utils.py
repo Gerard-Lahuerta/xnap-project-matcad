@@ -85,7 +85,6 @@ def get_data_model_2(path):
     for filename in os.listdir(path):
         X.append(io.imread(path + filename))
 
-    #print(X)
     split = int(0.95 * len(X))
     transform = transforms.ToTensor()
 
