@@ -50,15 +50,15 @@ def train_log(loss, example_ct, epoch):
 ############################################################################################
 
 
-def train_batch_model_1(image, label, model, optimizer, criterion, epochs, epoch, batch_ct, example_ct):
-    loss = train_batch(image, label, model, optimizer, criterion)
-    batch_ct += 1
-    example_ct += len(image)
+def train_batch_model_1(loader, model, optimizer, criterion, e_info, ct):
+    loss = train_batch(loader[0], loader[1], model, optimizer, criterion)
 
     # Report metrics every 25th batch
-    if ((batch_ct + 1) % 25) == 0:
-        epochs.set_postfix({'Loss': f"{loss:.6f}"})
-        train_log(loss, example_ct, epoch)
+    if ((e_info[0] + 1) % 25) == 0:
+        e_info[1].set_postfix({'Loss': f"{loss:.6f}"})
+        #train_log(loss, e_info[0], e_info[0])
+    
+    return [ct[0]+1, ct[1]+1]
 
 
 def train_batch_model_2():
@@ -69,7 +69,7 @@ def train_batch_model_3():
     pass
 
 
-def train_model(model, image, label, criterion, optimizer, config):
+def train_model(model, loader, criterion, optimizer, config):
     # Tell wandb to watch what the model gets up to: gradients, weights, and more!
     #wandb.watch(model, criterion, log="all", log_freq=10)
 
@@ -81,11 +81,16 @@ def train_model(model, image, label, criterion, optimizer, config):
         train_batch_model = train_batch_model_1
     elif model.get_name() == "Model 2":
         train_batch_model = train_batch_model_2
-    else:
+    elif model.get_name() == "Model 3":
         train_batch_model = train_batch_model_3
+    else:
+        assert(False)
 
-    batch_ct = 0
-    example_ct = 0
-    epochs = tqdm(range(config["epochs"]), desc="Train: ")
+    ct = [0,0] # batch_ct, example_ct
+
+    epochs = tqdm(range(config["epochs"]), desc="Train {0}: ".format(model.get_name()))
+    e_info = [None, epochs]
+
     for epoch in epochs:
-        train_batch_model(image, label, model, optimizer, criterion, epochs, epoch, batch_ct, example_ct)
+        e_info[0] = epoch
+        ct = train_batch_model(loader, model, optimizer, criterion, e_info, ct)

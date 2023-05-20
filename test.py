@@ -55,14 +55,13 @@ def test_model1(model, test, label, criterion, device="cuda", save:bool= True):
 
     # display the epoch training loss
     print("Test loss = {:.6f}".format(loss))
-    #show_image(label)
-    #show_image(output)
+
 
     cur = np.zeros((400, 400, 3))
     cur[:,:,0] = np.array(test[0][0,:,:].cpu())
     cur[:,:,1:] = np.array(128*output[0].cpu().permute(2,1,0))
-    imsave("img_result.png", (lab2rgb(cur)*255).astype(np.uint8))
-    imsave("img_gray_version.png", ((rgb2gray(lab2rgb(cur)))*255).astype(np.uint8))
+    imsave("results/"+model.get_name()+"/img_result.png", (lab2rgb(cur)*255).astype(np.uint8))
+    imsave("results/"+model.get_name()+"/img_gray_version.png", ((rgb2gray(lab2rgb(cur)))*255).astype(np.uint8))
     #wandb.log({"Loss": loss})
 
 

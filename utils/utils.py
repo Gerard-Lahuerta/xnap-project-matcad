@@ -147,19 +147,4 @@ def make(model_type, config, device = "cuda"):
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
     return model, train, test, criterion, optimizer
-
-
-def plot_image(img):
-    img = img.clamp(0, 1) # Ensure that the range of greyscales is between 0 and 1
-    npimg = img.numpy()   # Convert to NumPy
-    npimg = np.transpose(npimg, (2, 1, 0))   # Change the order to (W, H, C)
-    plt.imshow(npimg)
-    plt.show()
-
-
-def show_image(img):
-    print(img.shape)
-    grid = make_grid(img.detach().cpu().view(-1, 1, 400, 400).transpose(2, 3), 
-                     nrow=2, 
-                     normalize = True)
-    plot_image(grid)   
+ 
