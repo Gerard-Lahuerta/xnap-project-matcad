@@ -83,22 +83,23 @@ def get_data_model_2(path):
 
     X = []
     for filename in os.listdir(path):
-        image = Image.open(os.path.join(path, filename))
-        tensor_image = image.ToTensor()
-        X.append(tensor_image)
+        X.append(io.imread(path + filename))
 
-    X = torch.stack(X)
-    X = X.float()
-    X = X / 255.0
-
+    #print(X)
     split = int(0.95 * len(X))
+    transform = transforms.ToTensor()
 
     Xtrain = X[:split]
+    Xtrain = 1.0/255*np.array(Xtrain, dtype = "float")
+    Xtrain = transform(Xtrain).float()
 
-    Xtest = color.rgb2lab(X[split:])[:,:,:,0]
+    Xtest = color.rgb2lab(1.0/255*X[split:])[:,:,:,0]
     Xtest = Xtest.reshape(Xtest.shape+(1,))
-    Ytest = color.rgb2lab(X[split:])[:, :, :, 1:]
+    Xtest = transform(Xtest).float()
+
+    Ytest = color.rgb2lab(1.0/255*X[split:])[:, :, :, 1:]
     Ytest = Ytest / 128
+    Ytest = transform(Ytest).float()
 
     return Xtrain, Xtest, Ytest
 
