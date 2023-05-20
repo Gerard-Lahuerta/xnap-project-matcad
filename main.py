@@ -8,7 +8,6 @@ import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
 
-import utils.utils
 from train import *
 from test import *
 from utils.utils import *
@@ -54,7 +53,7 @@ if __name__ == "__main__":
     #wandb.login()
 
     config = dict(
-        epochs=1000,
+        epochs=100,
         classes=10,
         kernels=[16, 32],
         batch_size=128,
@@ -63,17 +62,22 @@ if __name__ == "__main__":
         architecture="CNN")
     
     save_weights_model = True
+    import_weights_model = False
     
     #model = model_pipeline(config)
 
-    model, train_loader, test_loader, criterion, optimizer = make(model_type="Model 1", config=config)
+    model, train_loader, test_loader, criterion, optimizer = make(model_type="Model 2", config=config)
 
     # and use them to train the model
-    train_model(model, train_loader, criterion, optimizer, config)
+    if not import_weights_model:
+        train_model(model, train_loader, criterion, optimizer, config)
+    else:
+        model = import_model(model)
 
     # and test its final performance
     test_model(model, test_loader, criterion)
 
     if save_weights_model:
-        utils.save_weights(model)
+        save_model(model)
     #test_model2(model, test_loader, criterion)
+
