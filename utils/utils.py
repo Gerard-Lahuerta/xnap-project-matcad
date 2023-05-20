@@ -6,6 +6,8 @@ import torchvision.transforms as transforms
 from models.models import *
 import matplotlib.pyplot as plt
 
+import json
+
 from PIL import Image
 import os
 import numpy as np
@@ -168,11 +170,29 @@ def save_image(output_AB, output_L, size, path):
 
 
 def save_model(model):
-    doc = "weights/Weights "+model.get_name()+".pth"
-    torch.save(model.state_dict(), doc)
+    doc = "weights/Weights "+model.get_name()+".json"
+    weights = model.state_dict()
+
+    # Convert the state_dict to a JSON-serializable format
+    weight_dic = {}
+    for key, value in weights.items():
+        weight_dic[key] = value.tolist()  # Convert tensors to lists
+
+    # Save the JSON to a file
+    with open(doc, 'w') as file:
+        json.dump(weight_dic, file)
 
 
 def import_model(model):
-    doc = "weights/Weights "+model.get_name()+".pth"
-    model.load_state_dict(torch.load(doc))
+    doc = "weights/Weights "+model.get_name()+".json"
+
+    with open(doc, 'r') as file:
+        weights = json.load(file)
+
+    # Convert the JSON-serialized state_dict back to PyTorch tensors
+    weight_dic = {}
+    for key, value in weights.items():
+        weight_dic[key] = torch.tensor(value)
+
+    model.load_state_dict(weight_dic)
     return model
