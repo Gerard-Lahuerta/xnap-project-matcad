@@ -72,8 +72,3 @@ if __name__ == "__main__":
     # and test its final performance
     test_model1(model, test_loader[0], test_loader[1], criterion)
     #test_model2(model, test_loader, criterion)
-
-"""
-if __name__ == "__main__":
-    X = utils.utils.get_test_data_model_2("data/data_2_3/Test/")
-"""

@@ -44,10 +44,30 @@ def train_batch(image, label, model, optimizer, criterion, device="cuda"):
 def train_log(loss, example_ct, epoch):
     # Where the magic happens
     wandb.log({"epoch": epoch, "loss": loss}, step=example_ct)
-    print(f"Loss after {str(example_ct).zfill(5)} examples: {loss:.3f}")
+    #print(f"Loss after {str(example_ct).zfill(5)} examples: {loss:.3f}")
 
 
 ############################################################################################
+
+
+def train_batch_model_1(image, label, model, optimizer, criterion, epochs, epoch, batch_ct, example_ct):
+    loss = train_batch(image, label, model, optimizer, criterion)
+    batch_ct += 1
+    example_ct += len(image)
+
+    # Report metrics every 25th batch
+    if ((batch_ct + 1) % 25) == 0:
+        epochs.set_postfix({'Loss': f"{loss:.6f}"})
+        train_log(loss, example_ct, epoch)
+
+
+def train_batch_model_2():
+    pass
+
+
+def train_batch_model_3():
+    pass
+
 
 def train_model(model, image, label, criterion, optimizer, config):
     # Tell wandb to watch what the model gets up to: gradients, weights, and more!
@@ -57,12 +77,15 @@ def train_model(model, image, label, criterion, optimizer, config):
 
     # Run training and track with wandb
 
+    if model.get_name() == "Model 1":
+        train_batch_model = train_batch_model_1
+    elif model.get_name() == "Model 2":
+        train_batch_model = train_batch_model_2
+    else:
+        train_batch_model = train_batch_model_3
+
     batch_ct = 0
+    example_ct = 0
     epochs = tqdm(range(config["epochs"]), desc="Train: ")
     for epoch in epochs:
-        loss = train_batch(image, label, model, optimizer, criterion)
-        batch_ct += 1
-
-        # Report metrics every 25th batch
-        if ((batch_ct + 1) % 25) == 0:
-            epochs.set_postfix({'Loss': f"{loss:.6f}"})
+        train_batch_model(image, label, model, optimizer, criterion, epochs, epoch, batch_ct, example_ct)

@@ -30,6 +30,8 @@ class Model1(nn.Module):
     def __init__(self):
         super(Model1, self).__init__()
 
+        self.name = "Model 1"
+
         self.encoder = nn.Sequential(
             nn.Conv2d(1, 8, (3, 3), padding=1, stride=2),
             nn.ReLU(),
@@ -67,6 +69,9 @@ class Model1(nn.Module):
         x = self.decoder(x)
         #print(x.shape)
         return x
+    
+    def get_name(self):
+        return self.name
 
 class Model2(nn.Module):
     def __init__(self):
