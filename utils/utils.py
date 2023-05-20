@@ -158,3 +158,14 @@ def save_image(output_AB, output_L, size, path):
         cur[:,:,0] = np.array(L[0][0,:,:].cpu())
         cur[:,:,1:] = np.array(128*AB[0].cpu().permute(2,1,0))
         imsave(path+"/img_"+str(i+1)+".png", (lab2rgb(cur)*255).astype(np.uint8))
+
+
+def save_model(model):
+    doc = "weights/Weights "+model.get_name()+".pth"
+    torch.save(model.state_dict(), doc)
+
+
+def import_model(model):
+    doc = "weights/Weights "+model.get_name()+".pth"
+    model.load_state_dict(torch.load(doc))
+    return model

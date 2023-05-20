@@ -62,6 +62,8 @@ if __name__ == "__main__":
         dataset="MNIST",
         architecture="CNN")
     
+    save_weights_model = True
+    
     #model = model_pipeline(config)
 
     model, train_loader, test_loader, criterion, optimizer = make(model_type="Model 1", config=config)
@@ -71,4 +73,7 @@ if __name__ == "__main__":
 
     # and test its final performance
     test_model(model, test_loader, criterion)
+
+    if save_weights_model:
+        utils.save_weights(model)
     #test_model2(model, test_loader, criterion)
