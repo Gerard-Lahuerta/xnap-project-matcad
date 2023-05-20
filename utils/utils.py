@@ -81,28 +81,36 @@ def get_data_model_1(path):
 
     return [X, Y]
 
-def get_data_model_2(path):
+def get_data_model_2(path, split = 0.95, train = True):
 
     X = []
     for filename in os.listdir(path):
         X.append(io.imread(path + filename))
 
-    split = int(0.95 * len(X))
+    split = int(split * len(X))
+    if not train:
+        split = 1-split
+        X = X[split:]
+    else:
+        X = X[:split]
     transform = transforms.ToTensor()
 
-    Xtrain = X[:split]
-    Xtrain = 1.0/255*np.array(Xtrain, dtype = "float")
-    Xtrain = transform(Xtrain).float()
+    Xtest = color.rgb2lab(1.0 / 255 * np.array(X, dtype="float"))[:, :, :, 0]
+    Xtest = Xtest.reshape(Xtest.shape + (1,))
+    aux = []
+    for i in Xtest:
+        aux.append(transform(i).float())
+    Xtest = aux
 
-    Xtest = color.rgb2lab(1.0/255*X[split:])[:,:,:,0]
-    Xtest = Xtest.reshape(Xtest.shape+(1,))
-    Xtest = transform(Xtest).float()
-
-    Ytest = color.rgb2lab(1.0/255*X[split:])[:, :, :, 1:]
+    Ytest = color.rgb2lab(1.0 / 255 * np.array(X, dtype="float"))[:, :, :, 1:]
     Ytest = Ytest / 128
-    Ytest = transform(Ytest).float()
+    aux = []
+    for i in Ytest:
+        aux.append(transform(i).float())
+    Ytest = aux
 
-    return Xtrain, Xtest, Ytest
+    return [Xtest, Ytest]
+
 
 def get_data_model_3(path):
     Xaux = []
@@ -142,7 +150,7 @@ def make(model_type, config, device = "cuda"):
         model = Model1().to(device)
     elif model_type == "Model 2":
         train = get_data_model_2("data/data_2_3/Train/")
-        test = get_test_data_model_2("data/data_2_3/Test/")
+        test = get_data_model_2("data/data_2_3/Test/", train=False)
         model = Model2().to(device)
     elif model_type == "Model 3":
         train = get_data_model_3("data/data_2_3/Train/")
