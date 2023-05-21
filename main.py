@@ -54,14 +54,19 @@ if __name__ == "__main__":
 
     config = dict(
         model = "Model 1",
-        epochs = 1000,
-        batch_size = 128,
+        epochs = 10,
+
         learning_rate = 0.01,
         optimizer = "SGD",
         criterion = "MSE",
+
         data_set = "default",
+        split = 0.95,
+
         save_weights = False,
         import_weights = False,
+        save_images = True,
+
         train = True,
         test = True
         )
@@ -75,7 +80,7 @@ if __name__ == "__main__":
         train_model(model, train_loader, criterion, optimizer, config)
 
     if config["test"]:
-        test_model(model, test_loader, criterion)
+        test_model(model, test_loader, criterion, save = config["save_images"])
 
     if config["save_weights"]:
         save_model(model)

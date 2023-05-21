@@ -44,22 +44,12 @@ def test(model, test_loader, device="cuda", save:bool= True):
 
 
 def test_model(model, test_loader, criterion, save:bool = True):
-
-    if model.get_name() == "Model 1":
-        test_model = test_model_1
-        size = 400
-    elif model.get_name() == "Model 2":
-        test_model = test_model_2
-        size = 256
-    elif model.get_name() == "Model 3":
-        test_model = test_model_3
-    else:
-        assert(False)
-
+        
     model.eval()
+    size = test_loader[0][0].shape[2]
 
     with torch.no_grad():
-        output_AB, output_L, loss = test_model(model, test_loader, criterion)
+        output_AB, output_L, loss = test(model, test_loader, criterion)
         print("Test loss = {:.6f}".format(loss))
         #wandb.log({"Loss": loss})
 
@@ -67,27 +57,17 @@ def test_model(model, test_loader, criterion, save:bool = True):
         path = "results/"+model.get_name()
         save_image(output_AB, output_L, size, path)
 
+     
 
-def test_model_1(model, test_loader, criterion, device="cuda"):
-
-    test = test_loader[0].to(device)
-    label = test_loader[1].to(device)
-
-    with torch.no_grad():
-        output = model(test)
-    
-    # compute training reconstruction loss
-    loss = criterion(output, label)
-   
-    return [output], [test], loss
-        
-
-def test_model_2(model, test, criterion, device="cuda", save: bool = True):
+def test(model, test, criterion, device="cuda", save: bool = True):
     model.eval()
 
     loss = 0
     output = []
     input = []
+    n = len(test[0])
+
+    #print(test.shape)
 
     test = tqdm(zip(test[0], test[1]), desc="Testing "+model.get_name())
     for L, AB in test:
@@ -96,14 +76,9 @@ def test_model_2(model, test, criterion, device="cuda", save: bool = True):
 
         with torch.no_grad():
             out = model(X)
-
         # compute training reconstruction loss
         loss += criterion(out, Y)
         input.append(X)
         output.append(out)
 
-    return output, input, loss/len(test[0])
-
-
-def test_model_3():
-    pass
+    return output, input, loss/n

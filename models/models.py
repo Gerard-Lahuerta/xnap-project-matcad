@@ -48,15 +48,15 @@ class Model1(nn.Module):
         )
 
         self.decoder = nn.Sequential(
-            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear"), #bilinear, nearest, bicubic
+            nn.Upsample(scale_factor= 2), #bilinear, nearest, bicubic
             #nn.MaxUnpool2d(2, stride=1),
             nn.ConvTranspose2d(32, 32, (3,3), padding=1, stride = 1),
             nn.ReLU(),
-            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear"),
+            nn.Upsample(scale_factor= 2),
             #nn.MaxUnpool2d(2, stride=1),
             nn.ConvTranspose2d(32,16, (3,3), padding=1, stride = 1),
             nn.ReLU(),
-            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear"),
+            nn.Upsample(scale_factor= 2),
             #nn.MaxUnpool2d(2, stride=1),
             nn.ConvTranspose2d(16, 2, (3,3), padding=1, stride = 1),
             nn.Tanh()

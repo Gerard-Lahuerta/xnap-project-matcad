@@ -55,38 +55,12 @@ def make(config, device="cuda"):
 '''
     
 ###################################################################################
-
-def lba_exclusion(image, channel):
-    out = image
-    if channel == 'L':
-        return out[:, :, 0]
-    else:
-        return out[:, :, 1:]
-
-
-def get_data_model_1(path):
-    rgb = io.imread(path)
     
-    lab = color.rgb2lab(1.0/255*rgb[:,:,0:3])
-    lab = np.array(lab, dtype = "float")
-
-    X = lba_exclusion(lab, "L")
-    Y = lba_exclusion(lab, "AB")/128
-
-    # Define a transform to convert the image to tensor
-    transform = transforms.ToTensor()
-
-    # Convert the image to PyTorch tensor
-    X = transform(X).float().reshape(1,1,400,400)
-    Y = transform(Y).float().reshape(1,2,400,400)
-
-    return [X, Y]
-
-def get_data_model_2(path, split = 0.95, train = True):
+def get_data_model(path, split = 0.95, train = True):
 
     X = []
     for filename in os.listdir(path):
-        X.append(io.imread(path + filename))
+        X.append(io.imread(path + filename)[:,:,0:3])
 
     split = int(split * len(X))
     if not train:
@@ -96,77 +70,48 @@ def get_data_model_2(path, split = 0.95, train = True):
         X = X[:split]
     transform = transforms.ToTensor()
 
+    size = X[0].shape[0]
+
     Xtest = color.rgb2lab(1.0 / 255 * np.array(X, dtype="float"))[:, :, :, 0]
     Xtest = Xtest.reshape(Xtest.shape + (1,))
+
     aux = []
     for i in Xtest:
-        aux.append(transform(i).float().reshape(1,1,256,256))
+        aux.append(transform(i).float().reshape(1,1,size,size))
     Xtest = aux
 
     Ytest = color.rgb2lab(1.0 / 255 * np.array(X, dtype="float"))[:, :, :, 1:]
     Ytest = Ytest / 128
     aux = []
     for i in Ytest:
-        aux.append(transform(i).float().reshape(1,2,256,256))
+        aux.append(transform(i).float().reshape(1,2,size,size))
     Ytest = aux
 
     return [Xtest, Ytest]
 
 
-def get_data_model_3(path):
-    Xaux = []
-    
-    X = []
-    # path = ruta a la carpeta on es troben totes les imatges pel TRAIN
-    for filename in os.listdir(path):
-        Xaux.append(Image.open(path + filename))
-    for image in Xaux:
-        image = image.convert('L')
-        transform = transforms.ToTensor()
-        image = transform(image)
-        X.append(image)
-
-    #split = int(0.95 * len(X))
-    #Xtrain = X[:split]
-    #print(X)
-    return X
-
-'''
-def get_test_data_model_2(path):
-    X = []
-    for filename in os.listdir(path):
-        img = Image.open(path + filename)
-        X.append(np.array(img).astype(float))
-    X = np.array(X)
-
-    X = rgb2lab(1.0/255 * X)[:,:,:,0]
-    X = np.reshape(X, X.shape + (1,))
-    #print(X)
-    return X
-'''
-
-def get_especific_data(path):
-    pass
-
 def get_data(config):
     if config["data_set"] == "default":
         if config["model"] == "Model 1":
-            train = get_data_model_1("data/data_1/woman.jpg")
-            test = get_data_model_1("data/data_1/woman.jpg")
+            train = get_data_model("data/data_1/", split = 0.5)
+            test = get_data_model("data/data_1/", split = 0.5, train = False)
 
         elif config["model"] == "Model 2":
-            train = get_data_model_2("data/data_2_3/Train/")
-            test = get_data_model_2("data/data_2_3/Test/", train=False)
+            train = get_data_model("data/data_2/Train/", split = 1)
+            test = get_data_model("data/data_2/Test/", train=False)
 
         else: # Model 3
-            train = get_data_model_3("data/data_2_3/Train/")
+            train = get_data_model("data/data_2/Train/", split = 1)
+            test = get_data_model("data/data_2/Test/", train=False)
 
     else:
-        train, test = get_especific_data(config["data_set"])
+        train = get_data_model(config["data_set"], split = config["split"])
+        test = get_data_model(config["data_set"], split = config["split"], train = False)
 
     return train, test
 
-def built_model(config):
+
+def built_model(config, device="cuda"):
     if config["model"] == "Model 1":
         model = Model1().to(device)
     elif config["model"] == "Model 2":
@@ -176,11 +121,13 @@ def built_model(config):
 
     return model
 
+
 def set_criterion(config):
     if config["criterion"] == "MSE":
         criterion = torch.nn.MSELoss()
     
     return criterion
+
 
 def set_optimizer(config, model):
     if config["optimizer"] == "Adam":
