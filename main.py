@@ -61,12 +61,12 @@ if __name__ == "__main__":
         dataset="MNIST",
         architecture="CNN")
     
-    save_weights_model = True
-    import_weights_model = False
+    save_weights_model = False
+    import_weights_model = True
     
     #model = model_pipeline(config)
 
-    model, train_loader, test_loader, criterion, optimizer = make(model_type="Model 2", config=config)
+    model, train_loader, test_loader, criterion, optimizer = make(model_type="Model 1", config=config)
 
     # and use them to train the model
     if not import_weights_model:
