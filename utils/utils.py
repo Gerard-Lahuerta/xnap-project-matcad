@@ -16,6 +16,7 @@ from skimage import io, color
 
 from skimage.io import imsave
 from skimage.color import rgb2lab, lab2rgb, rgb2gray
+from imgaug import augmenters as iaa
 
 '''
 def get_data(slice=1, train=True):
@@ -56,7 +57,7 @@ def make(config, device="cuda"):
     
 ###################################################################################
     
-def get_data_model(path, split = 0.95, train = True):
+def get_data_model(path, split = 0.95, train = True, augmentation = True):
 
     X = []
     for filename in os.listdir(path):
@@ -68,9 +69,20 @@ def get_data_model(path, split = 0.95, train = True):
         X = X[split:]
     else:
         X = X[:split]
-    transform = transforms.ToTensor()
 
     size = X[0].shape[0]
+
+'''
+    if augmentation:
+        transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.RandomResizedCrop(size),
+                transforms.RandomHorizontalFlip()
+            ])
+    else:
+    
+'''
+    transform = transforms.ToTensor()
 
     Xtest = color.rgb2lab(1.0 / 255 * np.array(X, dtype="float"))[:, :, :, 0]
     Xtest = Xtest.reshape(Xtest.shape + (1,))
@@ -121,10 +133,24 @@ def built_model(config, device="cuda"):
 
     return model
 
+def shuffle(loader):
+    p = np.random.permutation(len(loader[0]))
+    return [loader[0][p], loader[1][p]]
+
+
+def RMSELoss(yhat,y):
+    return torch.sqrt(torch.mean((yhat-y)**2))
+
 
 def set_criterion(config):
     if config["criterion"] == "MSE":
         criterion = torch.nn.MSELoss()
+
+    elif config["criterion"] == "MAE":
+        criterion = torch.nn.L1Loss()
+
+    else:
+        criterion = RMSELoss
     
     return criterion
 
@@ -199,3 +225,22 @@ def import_model(model):
 
     model.load_state_dict(weight_dic)
     return model
+
+
+class DataAugmentation:
+    def __init__(self):
+        self.aug = iaa.Sequential([
+            iaa.Scale((224, 224)),
+            iaa.Sometimes(0.25, iaa.GaussianBlur(sigma=(0, 3.0))),
+            iaa.Fliplr(0.5),
+            iaa.Affine(rotate=(-20, 20), mode='symmetric'),
+            iaa.Sometimes(0.25,
+                          iaa.OneOf([iaa.Dropout(p=(0, 0.1)),
+                                     iaa.CoarseDropout(0.1, size_percent=0.5)])),
+            iaa.AddToHueAndSaturation(value=(-10, 10), per_channel=True)
+        ])
+
+    def __call__(self, img):
+        img = np.array(img)
+        return self.aug.augment_image(img)
+

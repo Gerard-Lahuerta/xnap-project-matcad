@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     config = dict(
         model = "Model 2",
-        epochs = 10,
+        epochs = 100,
 
         learning_rate = 0.01,
         optimizer = "SGD",

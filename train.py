@@ -1,5 +1,6 @@
 from tqdm.auto import tqdm
 import wandb
+from utils.utils import shuffle
 
 '''
 def train(model, loader, criterion, optimizer, config):
@@ -49,7 +50,10 @@ def train_log(loss, example_ct, epoch):
 
 ############################################################################################
 
-def train_batch_model(loader, model, optimizer, criterion, e_info, ct):
+def train_batch_model(loader, model, optimizer, criterion, e_info, ct, shuffle_loader = True):
+    if shuffle_loader:
+        loader = shuffle(loader)
+
     for images, labels in zip(loader[0], loader[1]):
         loss = train_batch(images, labels, model, optimizer, criterion)
         ct[1] += len(images)
