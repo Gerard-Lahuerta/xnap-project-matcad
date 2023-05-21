@@ -53,31 +53,30 @@ if __name__ == "__main__":
     #wandb.login()
 
     config = dict(
-        epochs=1000,
-        classes=10,
-        kernels=[16, 32],
-        batch_size=128,
-        learning_rate=0.01,
-        dataset="MNIST",
-        architecture="CNN")
-    
-    save_weights_model = False
-    import_weights_model = True
-    
-    #model = model_pipeline(config)
+        model = "Model 1",
+        epochs = 1000,
+        batch_size = 128,
+        learning_rate = 0.01,
+        optimizer = "SGD",
+        criterion = "MSE",
+        data_set = "default",
+        save_weights = False,
+        import_weights = False,
+        train = True,
+        test = True
+        )
 
-    model, train_loader, test_loader, criterion, optimizer = make(model_type="Model 1", config=config)
+    model, train_loader, test_loader, criterion, optimizer = make(config=config)
 
-    # and use them to train the model
-    if not import_weights_model:
-        train_model(model, train_loader, criterion, optimizer, config)
-    else:
+    if config["import_weights"]:
         model = import_model(model)
+    
+    if config["train"]:
+        train_model(model, train_loader, criterion, optimizer, config)
 
-    # and test its final performance
-    test_model(model, test_loader, criterion)
+    if config["test"]:
+        test_model(model, test_loader, criterion)
 
-    if save_weights_model:
+    if config["save_weights"]:
         save_model(model)
-    #test_model2(model, test_loader, criterion)
 

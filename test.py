@@ -5,6 +5,7 @@ from skimage.color import rgb2lab, lab2rgb, rgb2gray
 import numpy as np
 
 from utils.utils import save_image
+from tqdm.auto import tqdm
 
 '''
 def test(model, test_loader, device="cuda", save:bool= True):
@@ -88,7 +89,8 @@ def test_model_2(model, test, criterion, device="cuda", save: bool = True):
     output = []
     input = []
 
-    for L, AB in zip(test[0], test[1]):
+    test = tqdm(zip(test[0], test[1]), desc="Testing "+model.get_name())
+    for L, AB in test:
         X = L.to(device)
         Y = AB.to(device)
 

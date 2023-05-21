@@ -7,6 +7,7 @@ from models.models import *
 import matplotlib.pyplot as plt
 
 import json
+from tqdm.auto import tqdm
 
 from PIL import Image
 import os
@@ -16,6 +17,7 @@ from skimage import io, color
 from skimage.io import imsave
 from skimage.color import rgb2lab, lab2rgb, rgb2gray
 
+'''
 def get_data(slice=1, train=True):
     full_dataset = torchvision.datasets.MNIST(root=".",
                                               train=train, 
@@ -35,7 +37,6 @@ def make_loader(dataset, batch_size):
                                          pin_memory=True, num_workers=2)
     return loader
 
-'''
 def make(config, device="cuda"):
     # Make the data
     train, test = get_data(train=True), get_data(train=False)
@@ -130,6 +131,7 @@ def get_data_model_3(path):
     #print(X)
     return X
 
+'''
 def get_test_data_model_2(path):
     X = []
     for filename in os.listdir(path):
@@ -141,36 +143,80 @@ def get_test_data_model_2(path):
     X = np.reshape(X, X.shape + (1,))
     #print(X)
     return X
+'''
 
-def make(model_type, config, device = "cuda"):
+def get_especific_data(path):
+    pass
 
-    if model_type == "Model 1":
-        train = get_data_model_1("data/data_1/woman.jpg")
-        test = get_data_model_1("data/data_1/woman.jpg")
-        model = Model1().to(device)
-    elif model_type == "Model 2":
-        train = get_data_model_2("data/data_2_3/Train/")
-        test = get_data_model_2("data/data_2_3/Test/", train=False)
-        model = Model2().to(device)
-    elif model_type == "Model 3":
-        train = get_data_model_3("data/data_2_3/Train/")
-        model = Model3().to(device) # por hacer
-        ### more things
+def get_data(config):
+    if config["data_set"] == "default":
+        if config["model"] == "Model 1":
+            train = get_data_model_1("data/data_1/woman.jpg")
+            test = get_data_model_1("data/data_1/woman.jpg")
+
+        elif config["model"] == "Model 2":
+            train = get_data_model_2("data/data_2_3/Train/")
+            test = get_data_model_2("data/data_2_3/Test/", train=False)
+
+        else: # Model 3
+            train = get_data_model_3("data/data_2_3/Train/")
+
     else:
-        assert(False)
+        train, test = get_especific_data(config["data_set"])
 
-    criterion = torch.nn.MSELoss()
-    #optimizer = torch.optim.Adam(model.parameters(), lr=config["learning_rate"]) # <-- ñe
-    #optimizer = torch.optim.RMSprop(model.parameters(), lr=config["learning_rate"], momentum=0.9) # <-- una mierda tremenda
-    #optimizer = torch.optim.Adadelta(model.parameters(), lr=config["learning_rate"]) # <-- kk
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
-    #optimizer = torch.optim.Adagrad(model.parameters(), lr = 0.01)
+    return train, test
+
+def built_model(config):
+    if config["model"] == "Model 1":
+        model = Model1().to(device)
+    elif config["model"] == "Model 2":
+        model = Model2().to(device)
+    else: # Model 3
+        model = Model3().to(device) 
+
+    return model
+
+def set_criterion(config):
+    if config["criterion"] == "MSE":
+        criterion = torch.nn.MSELoss()
+    
+    return criterion
+
+def set_optimizer(config, model):
+    if config["optimizer"] == "Adam":
+        optimizer = torch.optim.Adam(model.parameters(), lr=config["learning_rate"]) # <-- ñe
+    
+    elif config["optimizer"] == "RMSprop":
+        optimizer = torch.optim.RMSprop(model.parameters(), lr=config["learning_rate"], momentum=0.9) # <-- una mierda tremenda
+    
+    elif config["optimizer"] == "Adadelta":
+        optimizer = torch.optim.Adadelta(model.parameters(), lr=config["learning_rate"]) # <-- kk
+    
+    elif config["optimizer"] == "SGD":
+        optimizer = torch.optim.SGD(model.parameters(), lr=config["learning_rate"], momentum=0.9)
+    
+    elif config["optimizer"] == "Adagrad":
+        optimizer = torch.optim.Adagrad(model.parameters(), lr = 0.01)
+    
+    return optimizer
+    
+
+def make(config, device = "cuda"):
+
+    model = built_model(config)
+
+    train, test = get_data(config)
+
+    criterion = set_criterion(config)
+
+    optimizer = set_optimizer(config, model)
 
     return model, train, test, criterion, optimizer
  
 
 def save_image(output_AB, output_L, size, path):
-    for AB, L, i in zip(output_AB, output_L, range(len(output_AB))):
+    output = tqdm(zip(output_AB, output_L, range(len(output_AB))), desc="Saving images")
+    for AB, L, i in output: #zip(output_AB, output_L, range(len(output_AB))):
         cur = np.zeros((size, size, 3))
         cur[:,:,0] = np.array(L[0][0,:,:].cpu())
         cur[:,:,1:] = np.array(128*AB[0].cpu().permute(2,1,0))
@@ -182,8 +228,9 @@ def save_model(model):
     weights = model.state_dict()
 
     # Convert the state_dict to a JSON-serializable format
+    weight = tqdm(weights.items, desc="Saving model weights")
     weight_dic = {}
-    for key, value in weights.items():
+    for key, value in weight:
         weight_dic[key] = value.tolist()  # Convert tensors to lists
 
     # Save the JSON to a file
@@ -198,8 +245,9 @@ def import_model(model):
         weights = json.load(file)
 
     # Convert the JSON-serialized state_dict back to PyTorch tensors
+    weight = tqdm(weights.items, desc="Importing model weights")
     weight_dic = {}
-    for key, value in weights.items():
+    for key, value in weight:
         weight_dic[key] = torch.tensor(value)
 
     model.load_state_dict(weight_dic)
