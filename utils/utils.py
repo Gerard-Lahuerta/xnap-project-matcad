@@ -143,7 +143,7 @@ def set_optimizer(config, model):
         optimizer = torch.optim.SGD(model.parameters(), lr=config["learning_rate"], momentum=0.9)
     
     elif config["optimizer"] == "Adagrad":
-        optimizer = torch.optim.Adagrad(model.parameters(), lr = 0.01)
+        optimizer = torch.optim.Adagrad(model.parameters(), lr=config["learning_rate"])
     
     return optimizer
     

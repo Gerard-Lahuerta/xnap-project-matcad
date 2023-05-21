@@ -67,7 +67,6 @@ def test(model, test, criterion, device="cuda", save: bool = True):
     input = []
     n = len(test[0])
 
-    #print(test.shape)
 
     test = tqdm(zip(test[0], test[1]), desc="Testing "+model.get_name())
     for L, AB in test:
