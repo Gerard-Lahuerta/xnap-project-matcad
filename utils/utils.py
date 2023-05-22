@@ -57,7 +57,7 @@ def make(config, device="cuda"):
     
 ###################################################################################
     
-def get_data_model(path, split = 0.95, train = True, augmentation = True):
+def get_data_model(path, split = 0.95, train = True, augmentation = True, augment_factor = 2):
 
     X = []
     for filename in os.listdir(path):
@@ -72,31 +72,37 @@ def get_data_model(path, split = 0.95, train = True, augmentation = True):
 
     size = X[0].shape[0]
 
-'''
+
     if augmentation:
-        transform = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.RandomResizedCrop(size),
-                transforms.RandomHorizontalFlip()
-            ])
-    else:
-    
-'''
+        aug = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.RandomResizedCrop(size),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomVerticalFlip()
+        ])
+
     transform = transforms.ToTensor()
+
 
     Xtest = color.rgb2lab(1.0 / 255 * np.array(X, dtype="float"))[:, :, :, 0]
     Xtest = Xtest.reshape(Xtest.shape + (1,))
 
     aux = []
     for i in Xtest:
-        aux.append(transform(i).float().reshape(1,1,size,size))
+        aux.append(transform(i).float().reshape(1, 1, size, size))
+        if augmentation:
+            for j in range(augment_factor):
+                aux.append(aug(i).float().reshape(1, 1, size, size))
     Xtest = aux
 
     Ytest = color.rgb2lab(1.0 / 255 * np.array(X, dtype="float"))[:, :, :, 1:]
     Ytest = Ytest / 128
     aux = []
     for i in Ytest:
-        aux.append(transform(i).float().reshape(1,2,size,size))
+        aux.append(transform(i).float().reshape(1, 2, size, size))
+        if augmentation:
+            for j in range(augment_factor):
+                aux.append(aug(i).float().reshape(1, 2, size, size))
     Ytest = aux
 
     return [Xtest, Ytest]
@@ -106,19 +112,19 @@ def get_data(config):
     if config["data_set"] == "default":
         if config["model"] == "Model 1":
             train = get_data_model("data/data_1/", split = 0.5)
-            test = get_data_model("data/data_1/", split = 0.5, train = False)
+            test = get_data_model("data/data_1/", split = 0.5, train = False, augmentation=False)
 
         elif config["model"] == "Model 2":
             train = get_data_model("data/data_2/Train/", split = 1)
-            test = get_data_model("data/data_2/Test/", train=False)
+            test = get_data_model("data/data_2/Test/", train=False, augmentation=False)
 
         else: # Model 3
             train = get_data_model("data/data_2/Train/", split = 1)
-            test = get_data_model("data/data_2/Test/", train=False)
+            test = get_data_model("data/data_2/Test/", train=False, augmentation=False)
 
     else:
         train = get_data_model(config["data_set"], split = config["split"])
-        test = get_data_model(config["data_set"], split = config["split"], train = False)
+        test = get_data_model(config["data_set"], split = config["split"], train = False, augmentation=False)
 
     return train, test
 
@@ -135,7 +141,9 @@ def built_model(config, device="cuda"):
 
 def shuffle(loader):
     p = np.random.permutation(len(loader[0]))
-    return [loader[0][p], loader[1][p]]
+    train = [loader[0][i] for i in p]
+    test = [loader[1][i] for i in p]
+    return [train, test]
 
 
 def RMSELoss(yhat,y):
