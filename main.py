@@ -58,16 +58,16 @@ if __name__ == "__main__":
 
         learning_rate = 0.01,
         optimizer = "SGD",
-        criterion = "RMSE",
+        criterion = "MSE",
 
         data_set = "default",
         split = 0.95,
 
-        save_weights = False,
-        import_weights = False,
+        save_weights = True,
+        import_weights = True,
         save_images = True,
 
-        train = True,
+        train = False,
         test = True
         )
 

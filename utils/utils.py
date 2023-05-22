@@ -209,7 +209,7 @@ def save_model(model):
     weights = model.state_dict()
 
     # Convert the state_dict to a JSON-serializable format
-    weight = tqdm(weights.items, desc="Saving model weights")
+    weight = tqdm(weights.items(), desc="Saving model weights")
     weight_dic = {}
     for key, value in weight:
         weight_dic[key] = value.tolist()  # Convert tensors to lists
@@ -226,7 +226,7 @@ def import_model(model):
         weights = json.load(file)
 
     # Convert the JSON-serialized state_dict back to PyTorch tensors
-    weight = tqdm(weights.items, desc="Importing model weights")
+    weight = tqdm(weights.items(), desc="Importing model weights")
     weight_dic = {}
     for key, value in weight:
         weight_dic[key] = torch.tensor(value)
@@ -234,21 +234,4 @@ def import_model(model):
     model.load_state_dict(weight_dic)
     return model
 
-
-class DataAugmentation:
-    def __init__(self):
-        self.aug = iaa.Sequential([
-            iaa.Scale((224, 224)),
-            iaa.Sometimes(0.25, iaa.GaussianBlur(sigma=(0, 3.0))),
-            iaa.Fliplr(0.5),
-            iaa.Affine(rotate=(-20, 20), mode='symmetric'),
-            iaa.Sometimes(0.25,
-                          iaa.OneOf([iaa.Dropout(p=(0, 0.1)),
-                                     iaa.CoarseDropout(0.1, size_percent=0.5)])),
-            iaa.AddToHueAndSaturation(value=(-10, 10), per_channel=True)
-        ])
-
-    def __call__(self, img):
-        img = np.array(img)
-        return self.aug.augment_image(img)
 
