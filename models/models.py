@@ -1,5 +1,7 @@
 import torch.nn as nn
 import numpy as np
+import torch
+import torch.nn.functional as F
 
 # Conventional and convolutional neural network
 
@@ -127,52 +129,63 @@ class Model3(nn.Module):
         self.name = "Model 3"
 
         self.encoder = nn.Sequential(
-            nn.Conv2d(1, 64, (3,3), stride=2, padding=1),
+            nn.Conv2d(1, 64, (3, 3), stride=2, padding=1),
             nn.ReLU(),
-            nn.Conv2d(64, 128, (3,3), stride=1, padding=1),
+            nn.Conv2d(64, 128, (3, 3), stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(128, 128, (3,3), stride=2, padding=1),
+            nn.Conv2d(128, 128, (3, 3), stride=2, padding=1),
             nn.ReLU(),
-            nn.Conv2d(128, 256, (3,3), stride=1, padding=1),
+            nn.Conv2d(128, 256, (3, 3), stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(256, 256, (3,3), stride=2, padding=1),
+            nn.Conv2d(256, 256, (3, 3), stride=2, padding=1),
             nn.ReLU(),
-            nn.Conv2d(256, 512, (3,3), stride=1, padding=1),
+            nn.Conv2d(256, 512, (3, 3), stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(512, 512, (3,3), stride=1, padding=1),
+            nn.Conv2d(512, 512, (3, 3), stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(512, 256, (3,3), stride=1, padding=1),
+            nn.Conv2d(512, 256, (3, 3), stride=1, padding=1),
             nn.ReLU()
         )
 
         self.decoder = nn.Sequential(
-            nn.ConvTranspose2d(256+1000, 256, (1,1), stride=1, padding=0),
             nn.ReLU(),
-            nn.ConvTranspose2d(256, 128, (3,3)),
+            #nn.ConvTranspose2d(256 + 1000, 256, (1, 1), stride=1, padding=0),
+            #nn.ReLU(),
+            nn.ConvTranspose2d(256, 128, (3, 3)),
             nn.ReLU(),
-            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear"),
-            nn.ConvTranspose2d(128, 64, (3,3)),
+            nn.Upsample(scale_factor=2, align_corners=True, mode="bilinear"),
+            nn.ConvTranspose2d(128, 64, (3, 3)),
             nn.ReLU(),
-            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear"),
-            nn.ConvTranspose2d(64, 32, (3,3)),
+            nn.Upsample(scale_factor=2, align_corners=True, mode="bilinear"),
+            nn.ConvTranspose2d(64, 32, (3, 3)),
             nn.ReLU(),
-            nn.ConvTranspose2d(32, 16, (3,3)),
+            nn.ConvTranspose2d(32, 16, (3, 3)),
             nn.ReLU(),
-            nn.ConvTranspose2d(16, 2, (3,3)),
+            nn.ConvTranspose2d(16, 2, (3, 3)),
             nn.Tanh(),
-            nn.Upsample(scale_factor= 2, align_corners = True, mode = "bilinear")
+            nn.Upsample(scale_factor=2, align_corners=True, mode="bilinear")
         )
 
-    def fusion(x, embedding):
-        embedding = embedding.view(embedding.size(0), embedding.size(1), 1, 1)
-        embedding = embedding.repeat(1, 1, 32, 32)
-        return torch.cat((x, embedding), dim=1)
+        self.fusion_repeat = nn.Linear(1000, 32 * 32)
+        self.fusion_conv = nn.Conv2d(257, 256, kernel_size=1, stride=1, padding=0)
 
-    def forward(self, x, embedding):
+    def fusion(self, x, embed_input):
+        embed_input = self.fusion_repeat(embed_input)
+        embed_input = embed_input.view(embed_input.size(0), 32, 32)
+        embed_input = embed_input.unsqueeze(1)
+        fusion_input = torch.cat((x, embed_input), dim=1)
+        print(fusion_input.shape)
+        return self.fusion_conv(fusion_input)
+
+    def forward(self, x):
+        embed_input = torch.Tensor(1, 1000).to("cuda") #el 1 és el batch size
         x = self.encoder(x)
-        x = self.fusion(x, embedding)
+        print(x.shape)
+        x = self.fusion(x, embed_input)
+        print(x.shape)
         x = self.decoder(x)
+        print(x.shape)
         return x
-    
+
     def get_name(self):
         return self.name

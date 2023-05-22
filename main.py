@@ -53,8 +53,8 @@ if __name__ == "__main__":
     #wandb.login()
 
     config = dict(
-        model = "Model 1",
-        epochs = 10000,
+        model = "Model 3",
+        epochs = 100,
 
         learning_rate = 0.01,
         optimizer = "SGD",
@@ -64,10 +64,10 @@ if __name__ == "__main__":
         split = 0.95,
 
         save_weights = True,
-        import_weights = True,
+        import_weights = False,
         save_images = True,
 
-        train = False,
+        train = True,
         test = True
         )
 
