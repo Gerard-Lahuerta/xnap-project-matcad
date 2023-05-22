@@ -53,12 +53,12 @@ if __name__ == "__main__":
     #wandb.login()
 
     config = dict(
-        model = "Model 2",
-        epochs = 100,
+        model = "Model 1",
+        epochs = 10000,
 
         learning_rate = 0.01,
         optimizer = "SGD",
-        criterion = "MSE",
+        criterion = "RMSE",
 
         data_set = "default",
         split = 0.95,

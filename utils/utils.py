@@ -111,12 +111,12 @@ def get_data_model(path, split = 0.95, train = True, augmentation = True, augmen
 def get_data(config):
     if config["data_set"] == "default":
         if config["model"] == "Model 1":
-            train = get_data_model("data/data_1/", split = 0.5)
-            test = get_data_model("data/data_1/", split = 0.5, train = False, augmentation=False)
+            train = get_data_model("data/data_1/", split = 0.5, augmentation=False)
+            test = get_data_model("data/data_1/", split = 0.5, augmentation=False)
 
         elif config["model"] == "Model 2":
-            train = get_data_model("data/data_2/Train/", split = 1)
-            test = get_data_model("data/data_2/Test/", train=False, augmentation=False)
+            train = get_data_model("data/data_2/Train/", split = 1, augment_factor=5)
+            test = get_data_model("data/data_2/Test/", split = 1, train=False, augmentation=False)
 
         else: # Model 3
             train = get_data_model("data/data_2/Train/", split = 1)
