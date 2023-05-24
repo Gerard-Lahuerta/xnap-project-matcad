@@ -13,6 +13,9 @@ from test import *
 from utils.utils import *
 from tqdm.auto import tqdm
 
+import warnings
+warnings.filterwarnings('ignore')
+
 # Ensure deterministic behavior
 torch.backends.cudnn.deterministic = True
 random.seed(hash("setting random seeds") % 2**32 - 1)
@@ -54,7 +57,7 @@ if __name__ == "__main__":
 
     config = dict(
         model = "Model 2",
-        epochs = 1000,
+        epochs = 100,
 
         learning_rate = 0.01,
         sch = "StepLR",
@@ -74,13 +77,13 @@ if __name__ == "__main__":
         test = True
         )
 
-    model, train_loader, test_loader, criterion, optimizer, scheduler = make(config=config)
+    model, train_loader, test_loader, criterion, optimizer = make(config=config)
 
     if config["import_weights"]:
         model = import_model(model)
     
     if config["train"]:
-        train_model(model, train_loader, criterion, optimizer, config, scheduler)
+        train_model(model, train_loader, criterion, optimizer, config)
 
     if config["test"]:
         test_model(model, test_loader, criterion, save = config["save_images"])

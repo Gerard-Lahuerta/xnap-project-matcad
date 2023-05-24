@@ -115,7 +115,7 @@ def get_data(config):
             test = get_data_model("data/data_1/", split = 0.5, augmentation=False)
 
         elif config["model"] == "Model 2":
-            train = get_data_model("data/data_2/Train/", split = 1, augment_factor=5)
+            train = get_data_model("data/data_2/Train/", split = 1, augment_factor=1)
             test = get_data_model("data/data_2/Test/", split = 1, train=False, augmentation=False)
 
         else: # Model 3
@@ -124,7 +124,7 @@ def get_data(config):
 
     else:
         train = get_data_model(config["data_set"], split = config["split"])
-        test = get_data_model(config["data_set"], split = config["split"], train = False, augmentation=False)
+        test = get_data_model(config["data_set"], split = config["split"], train = False, augmenta1tion=False)
 
     return train, test
 
@@ -192,9 +192,9 @@ def make(config, device = "cuda"):
 
     optimizer = set_optimizer(config, model)
 
-    scheduler = set_scheduler(config["sch"], optimizer, params = config["params"])
+    #scheduler = set_scheduler(config["sch"], optimizer, params = config["params"])
 
-    return model, train, test, criterion, optimizer, scheduler
+    return model, train, test, criterion, optimizer#, scheduler
  
 
 def save_image(output_AB, output_L, size, path):
