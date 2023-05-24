@@ -25,7 +25,7 @@ def test(model, test_loader, device="cuda", save:bool= True):
         wandb.log({"test_accuracy": correct / total})
 
     if save:
-        print(len(images))
+        
         # Save the model in the exchangeable ONNX format
         torch.onnx.export(model,  # model being run
                           images,  # model input (or a tuple for multiple inputs)
