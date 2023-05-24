@@ -192,7 +192,9 @@ def make(config, device = "cuda"):
 
     optimizer = set_optimizer(config, model)
 
-    return model, train, test, criterion, optimizer
+    scheduler = set_scheduler(config["sch"], optimizer, params = config["params"])
+
+    return model, train, test, criterion, optimizer, scheduler
  
 
 def save_image(output_AB, output_L, size, path):
@@ -234,4 +236,13 @@ def import_model(model):
     model.load_state_dict(weight_dic)
     return model
 
+def set_scheduler(sch, optim, params = None):
+    if sch == "StepLR":
+        scheduler = torch.optim.lr_scheduler.StepLR(optim, step_size = params["step_size"], gamma = params["gamma"])
 
+    elif sch == "ExpoLR":
+        scheduler = torch.optim.lr_scheduler.ExponentialLR(optim, gamma = params["gamma"])
+
+    # torch.optim.lr_scheduler.ReduceLROnPlateau(optim)
+
+    return scheduler

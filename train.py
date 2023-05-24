@@ -23,7 +23,7 @@ def train(model, loader, criterion, optimizer, config):
                 train_log(loss, example_ct, epoch)
 '''
 
-def train_batch(image, label, model, optimizer, criterion, device="cuda"):
+def train_batch(image, label, model, optimizer, criterion, scheduler, device="cuda"):
     images, labels = image.to(device), label.to(device)
 
     # Forward pass ➡
@@ -38,6 +38,7 @@ def train_batch(image, label, model, optimizer, criterion, device="cuda"):
 
     # Step with optimizer
     optimizer.step()
+    scheduler.step()
 
     return loss
 
@@ -50,24 +51,25 @@ def train_log(loss, example_ct, epoch):
 
 ############################################################################################
 
-def train_batch_model(loader, model, optimizer, criterion, e_info, ct, shuffle_loader = True):
+def train_batch_model(loader, model, optimizer, criterion, ct, scheduler, shuffle_loader = True):
     if shuffle_loader:
         loader = shuffle(loader)
 
     for images, labels in zip(loader[0], loader[1]):
-        loss = train_batch(images, labels, model, optimizer, criterion)
+        loss = train_batch(images, labels, model, optimizer, criterion, scheduler)
         ct[1] += len(images)
         ct[0] += 1
 
         # Report metrics every 25th batch
         if ((ct[0] + 1) % 25) == 0:
-            e_info[1].set_postfix({'Loss': f"{loss:.6f}"})
+            #e_info[1].set_postfix({'Loss': f"{loss:.6f}"})
+            print("Loss",loss)
             #train_log(loss, e_info[0], e_info[0])
     return [ct[0], ct[1]]
 
 
 
-def train_model(model, loader, criterion, optimizer, config):
+def train_model(model, loader, criterion, optimizer, scheduler, config):
     # Tell wandb to watch what the model gets up to: gradients, weights, and more!
     #wandb.watch(model, criterion, log="all", log_freq=10)
 
@@ -76,9 +78,10 @@ def train_model(model, loader, criterion, optimizer, config):
     # Run training and track with wandb       
     ct = [0,0] # batch_ct, example_ct
 
-    epochs = tqdm(range(config["epochs"]), desc="Train {0}: ".format(model.get_name()))
-    e_info = [None, epochs]
+    #epochs = tqdm(range(config["epochs"]), desc="Train {0}: ".format(model.get_name()))
+    #e_info = [None, epochs]
 
-    for epoch in epochs:
-        e_info[0] = epoch
-        ct = train_batch_model(loader, model, optimizer, criterion, e_info, ct)
+    for epoch in range(config["epochs"]):#epochs:
+        #e_info[0] = epoch
+        ct = train_batch_model(loader, model, optimizer, criterion, ct, scheduler)
+        #scheduler.step()

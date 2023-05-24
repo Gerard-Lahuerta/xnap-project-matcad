@@ -53,10 +53,13 @@ if __name__ == "__main__":
     #wandb.login()
 
     config = dict(
-        model = "Model 3",
+        model = "Model 2",
         epochs = 1000,
 
-        learning_rate = 0.0001,
+        learning_rate = 0.01,
+        sch = "StepLR",
+        params = {"step_size": 30, "gamma": 0.1},
+
         optimizer = "SGD",
         criterion = "MSE",
 
@@ -71,13 +74,13 @@ if __name__ == "__main__":
         test = True
         )
 
-    model, train_loader, test_loader, criterion, optimizer = make(config=config)
+    model, train_loader, test_loader, criterion, optimizer, scheduler = make(config=config)
 
     if config["import_weights"]:
         model = import_model(model)
     
     if config["train"]:
-        train_model(model, train_loader, criterion, optimizer, config)
+        train_model(model, train_loader, criterion, optimizer, config, scheduler)
 
     if config["test"]:
         test_model(model, test_loader, criterion, save = config["save_images"])
