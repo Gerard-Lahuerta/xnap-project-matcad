@@ -84,6 +84,10 @@ def get_data_model(path, split = 0.95, train = True, augmentation = True, augmen
     transform = transforms.ToTensor()
 
 
+#################### HACER FUNCION QUE PASE A FOTOS CUADRADAS #########################
+    print(X[0].shape)
+    exit()
+
     Xtest = color.rgb2lab(1.0 / 255 * np.array(X, dtype="float"))[:, :, :, 0]
     Xtest = Xtest.reshape(Xtest.shape + (1,))
 
