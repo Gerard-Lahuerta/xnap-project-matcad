@@ -56,7 +56,7 @@ if __name__ == "__main__":
     #wandb.login()
 
     config = dict(
-        model = "Model 2",
+        model = "Model 1",
         epochs = 100,
 
         learning_rate = 0.01,
