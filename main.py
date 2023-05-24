@@ -54,9 +54,9 @@ if __name__ == "__main__":
 
     config = dict(
         model = "Model 3",
-        epochs = 100,
+        epochs = 1000,
 
-        learning_rate = 0.01,
+        learning_rate = 0.0001,
         optimizer = "SGD",
         criterion = "MSE",
 

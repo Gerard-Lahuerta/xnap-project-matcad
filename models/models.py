@@ -148,43 +148,48 @@ class Model3(nn.Module):
         )
 
         self.decoder = nn.Sequential(
+            nn.ConvTranspose2d(256, 128, (3, 3), padding = 1),
             nn.ReLU(),
-            #nn.ConvTranspose2d(256 + 1000, 256, (1, 1), stride=1, padding=0),
-            #nn.ReLU(),
-            nn.ConvTranspose2d(256, 128, (3, 3)),
+            nn.Upsample(scale_factor=2),
+            nn.ConvTranspose2d(128, 64, (3, 3), padding = 1),
             nn.ReLU(),
-            nn.Upsample(scale_factor=2, align_corners=True, mode="bilinear"),
-            nn.ConvTranspose2d(128, 64, (3, 3)),
+            nn.Upsample(scale_factor=2),
+            nn.ConvTranspose2d(64, 32, (3, 3), padding = 1),
             nn.ReLU(),
-            nn.Upsample(scale_factor=2, align_corners=True, mode="bilinear"),
-            nn.ConvTranspose2d(64, 32, (3, 3)),
+            nn.ConvTranspose2d(32, 16, (3, 3), padding = 1),
             nn.ReLU(),
-            nn.ConvTranspose2d(32, 16, (3, 3)),
-            nn.ReLU(),
-            nn.ConvTranspose2d(16, 2, (3, 3)),
+            nn.ConvTranspose2d(16, 2, (3, 3), padding = 1, stride = 1),
             nn.Tanh(),
-            nn.Upsample(scale_factor=2, align_corners=True, mode="bilinear")
+            nn.Upsample(scale_factor=2)
         )
 
-        self.fusion_repeat = nn.Linear(1000, 32 * 32)
-        self.fusion_conv = nn.Conv2d(257, 256, kernel_size=1, stride=1, padding=0)
+        self.conv_fusion = nn.Conv2d(1256, 256, (1,1), padding = 0, stride = 1)
 
-    def fusion(self, x, embed_input):
+    def fusion(self, x):
+        input_aux = torch.randn(1,1000, 32, 32).to("cuda")
+        fusion_aux = torch.cat((x,input_aux), 1)
+        #print(x.shape)
+        #print(fusion_aux.shape)
+        fusion_aux = self.conv_fusion(fusion_aux)
+        nn.ReLU()
+        return fusion_aux
+        ''''
         embed_input = self.fusion_repeat(embed_input)
         embed_input = embed_input.view(embed_input.size(0), 32, 32)
         embed_input = embed_input.unsqueeze(1)
         fusion_input = torch.cat((x, embed_input), dim=1)
         print(fusion_input.shape)
         return self.fusion_conv(fusion_input)
+        '''
 
     def forward(self, x):
-        embed_input = torch.Tensor(1, 1000).to("cuda") #el 1 és el batch size
+        #embed_input = torch.Tensor(1, 1000).to("cuda") #el 1 és el batch size
         x = self.encoder(x)
-        print(x.shape)
-        x = self.fusion(x, embed_input)
-        print(x.shape)
+        #print(x.shape)
+        x = self.fusion(x)
+        #print(x.shape)
         x = self.decoder(x)
-        print(x.shape)
+        #print(x.shape)
         return x
 
     def get_name(self):

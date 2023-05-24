@@ -119,8 +119,8 @@ def get_data(config):
             test = get_data_model("data/data_2/Test/", split = 1, train=False, augmentation=False)
 
         else: # Model 3
-            train = get_data_model("data/data_2/Train/", split = 1)
-            test = get_data_model("data/data_2/Test/", train=False, augmentation=False)
+            train = get_data_model("data/data_2/Train/", split = 1, augmentation = True, augment_factor= 3)
+            test = get_data_model("data/data_2/Train/", split = 1, augmentation=False)
 
     else:
         train = get_data_model(config["data_set"], split = config["split"])
