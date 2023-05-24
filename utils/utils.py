@@ -60,7 +60,8 @@ def make(config, device="cuda"):
 def get_data_model(path, split = 0.95, train = True, augmentation = True, augment_factor = 2):
 
     # torchvision.transforms.functional.crop(img: Tensor, top: int, left: int, height: int, width: int) --> cuadrado
-
+    # torchvision.transforms.CenterCrop(size)
+    
     X = []
     for filename in os.listdir(path):
         X.append(io.imread(path + filename)[:,:,0:3])
