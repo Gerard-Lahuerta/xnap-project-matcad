@@ -59,6 +59,8 @@ def make(config, device="cuda"):
     
 def get_data_model(path, split = 0.95, train = True, augmentation = True, augment_factor = 2):
 
+    # torchvision.transforms.functional.crop(img: Tensor, top: int, left: int, height: int, width: int) --> cuadrado
+
     X = []
     for filename in os.listdir(path):
         X.append(io.imread(path + filename)[:,:,0:3])
@@ -83,10 +85,7 @@ def get_data_model(path, split = 0.95, train = True, augmentation = True, augmen
 
     transform = transforms.ToTensor()
 
-
 #################### HACER FUNCION QUE PASE A FOTOS CUADRADAS #########################
-    print(X[0].shape)
-    exit()
 
     Xtest = color.rgb2lab(1.0 / 255 * np.array(X, dtype="float"))[:, :, :, 0]
     Xtest = Xtest.reshape(Xtest.shape + (1,))
