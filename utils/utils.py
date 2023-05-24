@@ -111,8 +111,8 @@ def get_data_model(path, split = 0.95, train = True, augmentation = True, augmen
 def get_data(config):
     if config["data_set"] == "default":
         if config["model"] == "Model 1":
-            train = get_data_model("data/data_2/Train/", split = 0.5, augmentation=False)
-            test = get_data_model("data/data_2/Train/", split = 0.5, augmentation=False)
+            train = get_data_model("data/data_1/", split = 0.5, augmentation=False)
+            test = get_data_model("data/data_1/", split = 0.5, train=False, augmentation=False)
 
         elif config["model"] == "Model 2":
             train = get_data_model("data/data_2/Train/", split = 1, augmentation = False)
@@ -123,8 +123,8 @@ def get_data(config):
             test = get_data_model("data/data_2/Train/", split = 1, augmentation=False)
 
     else:
-        train = get_data_model(config["data_set"], split = config["split"])
-        test = get_data_model(config["data_set"], split = config["split"], train = False, augmenta1tion=False)
+        train = get_data_model(config["data_set"], split = config["split"], augmentation= False)
+        test = get_data_model(config["data_set"], split = config["split"], train = False, augmentation=False)
 
     return train, test
 
@@ -136,8 +136,10 @@ def built_model(config, device="cuda"):
         model = Model2().to(device)
     elif config["model"] == "Model 3": # Model 3
         model = Model3().to(device) 
-    else:
+    elif config["model"] == "ConVAE":
         model = ConvAE().to(device)
+    else:
+        model = ColorizationNet().to(device)
 
     return model
 
@@ -204,7 +206,7 @@ def save_image(output_AB, output_L, size, path):
     for AB, L, i in output: #zip(output_AB, output_L, range(len(output_AB))):
         cur = np.zeros((size, size, 3))
         cur[:,:,0] = np.array(L[0][0,:,:].cpu())
-        cur[:,:,1:] = np.array(128*AB[0].cpu().permute(2,1,0))
+        cur[:,:,1:] = np.array(128*AB[0].cpu().permute(1,2,0))
         imsave(path+"/img_"+str(i+1)+".png", (lab2rgb(cur)*255).astype(np.uint8))
 
 

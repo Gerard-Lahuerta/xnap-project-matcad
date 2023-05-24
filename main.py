@@ -56,18 +56,18 @@ if __name__ == "__main__":
     #wandb.login()
 
     config = dict(
-        model = "Convae",
-        epochs = 20,
+        model = "Model 1",
+        epochs = 100,
 
-        learning_rate = 0.01,
+        learning_rate = 0.001,
         sch = "StepLR",
         params = {"step_size": 30, "gamma": 0.1},
 
-        optimizer = "SGD",
+        optimizer = "Adam",
         criterion = "MSE",
 
-        data_set = "data/data_2/Train/", #"default",
-        split = 0.95,
+        data_set = "default", # "data/data_1/", #
+        split = 0.5,
 
         save_weights = True,
         import_weights = False,
