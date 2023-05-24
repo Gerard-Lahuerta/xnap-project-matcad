@@ -66,7 +66,7 @@ if __name__ == "__main__":
         optimizer = "Adam",
         criterion = "MSE",
 
-        data_set = "default", # "data/data_1/", #
+        data_set = "data/Perros/", #
         split = 0.5,
 
         save_weights = True,
