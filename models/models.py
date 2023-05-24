@@ -194,3 +194,36 @@ class Model3(nn.Module):
 
     def get_name(self):
         return self.name
+    
+#######################################################################################
+
+from torch.nn.modules.conv import ConvTranspose2d
+class ConvAE(nn.Module):
+    def __init__(self):
+        super(ConvAE, self).__init__()
+        self.encoder = nn.Sequential(
+            nn.Conv2d(1, 16, 3, stride=3, padding=1),  # b, 16, 10, 10
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=2),  # b, 16, 5, 5
+            nn.Conv2d(16, 8, 3, stride=2, padding=1),  # b, 8, 3, 3
+            nn.ReLU(),
+            nn.MaxPool2d(2, stride=1)  # b, 8, 2, 2
+        )
+        self.decoder = nn.Sequential(
+            nn.ConvTranspose2d(8, 16, 3, stride=2),
+            nn.ReLU(),
+            nn.ConvTranspose2d(16, 8, 5, stride=3, padding=1),
+            nn.ReLU(),
+            nn.ConvTranspose2d(8, 1, 2, stride=2, padding=1),
+            nn.Sigmoid()    
+        )
+
+        self.name = "ConVAE"
+
+    def forward(self, x):
+        x = self.encoder(x)
+        x = self.decoder(x)
+        return x
+
+    def get_name(self):
+        return self.name

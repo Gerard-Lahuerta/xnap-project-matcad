@@ -134,8 +134,10 @@ def built_model(config, device="cuda"):
         model = Model1().to(device)
     elif config["model"] == "Model 2":
         model = Model2().to(device)
-    else: # Model 3
+    elif config["model"] == "Model 3": # Model 3
         model = Model3().to(device) 
+    else:
+        model = ConvAE().to(device)
 
     return model
 
