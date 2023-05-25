@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 
 import json
 from tqdm.auto import tqdm
+import random
 
 from PIL import Image
 import os
@@ -56,15 +57,29 @@ def make(config, device="cuda"):
 '''
     
 ###################################################################################
-    
+def crop_center(X,cropx,cropy):
+    ret = []
+    for img in tqdm(X, desc="Adjusting Images"):
+        y = img.shape[0]
+        x = img.shape[1]
+        if x > cropx and y > cropy:
+            startx = x//2-(cropx//2)
+            starty = y//2-(cropy//2)
+            img = img[starty:starty + cropy, startx:startx + cropx, :]
+            ret.append(img)
+    #print("-->",len(X)-len(ret),"images discarted  ---  train with",len(ret),"images")
+    return ret
+
 def get_data_model(path, split = 0.95, train = True, augmentation = True, augment_factor = 2):
 
     # torchvision.transforms.functional.crop(img: Tensor, top: int, left: int, height: int, width: int) --> cuadrado
     # torchvision.transforms.CenterCrop(size)
-    
+
     X = []
     for filename in os.listdir(path):
         X.append(io.imread(path + filename)[:,:,0:3])
+
+    #random.shuffle(X)
 
     split = int(split * len(X))
     if not train:
@@ -73,30 +88,23 @@ def get_data_model(path, split = 0.95, train = True, augmentation = True, augmen
     else:
         X = X[:split]
 
-    size = X[0].shape[0]
+    size = X[0].shape
 
-
-    if augmentation:
-        aug = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.RandomResizedCrop(size),
-            transforms.RandomHorizontalFlip(),
-            transforms.RandomVerticalFlip()
-        ])
+    if size[0] != size[1]:
+        size = 256
+        X = crop_center(X,256,256)
+    else:
+        size = size[0]
 
     transform = transforms.ToTensor()
 
-#################### HACER FUNCION QUE PASE A FOTOS CUADRADAS #########################
-
     Xtest = color.rgb2lab(1.0 / 255 * np.array(X, dtype="float"))[:, :, :, 0]
+
     Xtest = Xtest.reshape(Xtest.shape + (1,))
 
     aux = []
     for i in Xtest:
         aux.append(transform(i).float().reshape(1, 1, size, size))
-        if augmentation:
-            for j in range(augment_factor):
-                aux.append(aug(i).float().reshape(1, 1, size, size))
     Xtest = aux
 
     Ytest = color.rgb2lab(1.0 / 255 * np.array(X, dtype="float"))[:, :, :, 1:]
@@ -104,9 +112,6 @@ def get_data_model(path, split = 0.95, train = True, augmentation = True, augmen
     aux = []
     for i in Ytest:
         aux.append(transform(i).float().reshape(1, 2, size, size))
-        if augmentation:
-            for j in range(augment_factor):
-                aux.append(aug(i).float().reshape(1, 2, size, size))
     Ytest = aux
 
     return [Xtest, Ytest]
@@ -123,7 +128,7 @@ def get_data(config):
             test = get_data_model("data/data_2/Test/", split = 1, train=False, augmentation=False)
 
         else: # Model 3
-            train = get_data_model("data/data_2/Train/", split = 1, augmentation = True, augment_factor= 3)
+            train = get_data_model("data/data_2/Train/", split = 1)
             test = get_data_model("data/data_2/Train/", split = 1, augmentation=False)
 
     else:
