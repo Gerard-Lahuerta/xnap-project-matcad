@@ -1,6 +1,8 @@
 from tqdm.auto import tqdm
 import wandb
 from utils.utils import shuffle
+import numpy as np
+import random
 
 '''
 def train(model, loader, criterion, optimizer, config):
@@ -24,7 +26,7 @@ def train(model, loader, criterion, optimizer, config):
 '''
 
 def train_batch(image, label, model, optimizer, criterion, device="cuda"):
-    images, labels = image.to(device), label.to(device)
+    images, labels =image.to(device), label.to(device)
 
     # Forward pass ➡
     #print(image.shape)
@@ -65,13 +67,15 @@ def create_minibatch(loader, n_batch):
             k = 0
             aux[0].append(aux_aux[0])
             aux[1].append(aux_aux[1])
-
+    
     return aux
 
 
-def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_loader = True):
+def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_loader = True, n_batch = 4):
     if shuffle_loader:
         loader = shuffle(loader)
+
+    #loader = create_minibatch(loader, n_batch)
 
     for images, labels in zip(loader[0], loader[1]):
         loss = train_batch(images, labels, model, optimizer, criterion)
@@ -88,7 +92,7 @@ def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_l
 
 
 def train_model(model, loader, criterion, optimizer, config):
-    # Tell wandb to watch what the model gets up to: gradients, weights, and more!
+    # Tell wandb to watch what the model gets up to: gradients, weights, and more! 
     #wandb.watch(model, criterion, log="all", log_freq=10)
 
     model.train()

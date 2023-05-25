@@ -70,7 +70,7 @@ def crop_center(X,cropx,cropy):
     #print("-->",len(X)-len(ret),"images discarted  ---  train with",len(ret),"images")
     return ret
 
-def get_data_model(path, split = 0.95, train = True, augmentation = True, augment_factor = 2):
+def get_data_model(path, split = 0.95, train = True):
 
     # torchvision.transforms.functional.crop(img: Tensor, top: int, left: int, height: int, width: int) --> cuadrado
     # torchvision.transforms.CenterCrop(size)
@@ -120,20 +120,20 @@ def get_data_model(path, split = 0.95, train = True, augmentation = True, augmen
 def get_data(config):
     if config["data_set"] == "default":
         if config["model"] == "Model 1":
-            train = get_data_model("data/data_1/", split = 0.5, augmentation=False)
-            test = get_data_model("data/data_1/", split = 0.5, train=False, augmentation=False)
+            train = get_data_model("data/data_1/", split = 0.5)
+            test = get_data_model("data/data_1/", split = 0.5)
 
         elif config["model"] == "Model 2":
-            train = get_data_model("data/data_2/Train/", split = 1, augmentation = False)
-            test = get_data_model("data/data_2/Test/", split = 1, train=False, augmentation=False)
+            train = get_data_model("data/data_2/Train/", split = 1)
+            test = get_data_model("data/data_2/Test/", split = 1)
 
         else: # Model 3
             train = get_data_model("data/data_2/Train/", split = 1)
-            test = get_data_model("data/data_2/Train/", split = 1, augmentation=False)
+            test = get_data_model("data/data_2/Train/", split = 1)
 
     else:
-        train = get_data_model(config["data_set"], split = config["split"], augmentation= False)
-        test = get_data_model(config["data_set"], split = 0.01, train = False, augmentation=False)
+        train = get_data_model(config["data_set"], split = config["split"])
+        test = get_data_model(config["data_set"], split = 1, train = False)
 
     return train, test
 
