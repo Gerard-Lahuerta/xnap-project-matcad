@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     config = dict(
         model = "Model 3",
-        epochs = 100,
+        epochs = 250,
 
         learning_rate = 0.0001,
         sch = "StepLR",
@@ -69,7 +69,7 @@ if __name__ == "__main__":
         data_set = "data/Captioning/",#"data/data_2/Train/", #"data/Captioning/", ##data/PERROS/",#"default", "data/Captioning/" 
         split = 0.25,
 
-        save_weights = True,
+        save_weights = False,
         import_weights = False,
         save_images = True,
 
