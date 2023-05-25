@@ -56,8 +56,8 @@ if __name__ == "__main__":
     #wandb.login()
 
     config = dict(
-        model = "color",
-        epochs = 20,
+        model = "Model 1",
+        epochs = 1000,
 
         learning_rate = 0.0001,
         sch = "StepLR",
@@ -66,11 +66,11 @@ if __name__ == "__main__":
         optimizer = "Adam",
         criterion = "MSE",
 
-        data_set = "data/Captioning/", #data/PERROS/",#"default",
-        split = 0.15,
+        data_set = "data/Captioning/", #data/PERROS/",#"default", "data/Captioning/"
+        split = 0.01,
 
-        save_weights = True,
-        import_weights = False,
+        save_weights = False,
+        import_weights = True,
         save_images = True,
 
         train = True,

@@ -133,7 +133,7 @@ def get_data(config):
 
     else:
         train = get_data_model(config["data_set"], split = config["split"], augmentation= False)
-        test = get_data_model(config["data_set"], split = config["split"], train = False, augmentation=False)
+        test = get_data_model(config["data_set"], split = 0.01, train = False, augmentation=False)
 
     return train, test
 
