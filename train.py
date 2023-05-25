@@ -51,6 +51,24 @@ def train_log(loss, example_ct, epoch):
 
 ############################################################################################
 
+def create_minibatch(loader, n_batch):
+    n = len(loader[0])//n_batch
+    aux = [[],[]]
+    aux_aux = [[],[]]
+    k = 0
+
+    for i,j in zip(loader[0], loader[1]):
+        aux_aux[0].append(i)
+        aux_aux[1].append(j)
+        k += 1
+        if k == n:
+            k = 0
+            aux[0].append(aux_aux[0])
+            aux[1].append(aux_aux[1])
+
+    return aux
+
+
 def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_loader = True):
     if shuffle_loader:
         loader = shuffle(loader)
