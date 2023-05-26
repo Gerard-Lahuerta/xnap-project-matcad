@@ -1,3 +1,17 @@
+"""
+    Auxiliar file with the encoder-decoder models
+    @Version: 1.0.0
+
+    @Authors:
+            --> Ona Sánchez -- 1601181
+            --> Gerard Lahuerta -- 1601350
+            --> Bruno Tejedo Miniéri
+
+    @Copyright (c) 2023 All Right Reserved
+
+    Information about the program in: https://github.com/DCC-UAB/xnap-project-matcad_grup_6.git
+"""
+
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
