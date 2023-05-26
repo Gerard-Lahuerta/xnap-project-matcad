@@ -1,8 +1,7 @@
 from tqdm.auto import tqdm
 import wandb
-from utils.utils import shuffle
-import numpy as np
-import random
+from utils.utils import shuffle, save_1_image
+import torch
 
 '''
 def train(model, loader, criterion, optimizer, config):
@@ -29,7 +28,6 @@ def train_batch(image, label, model, optimizer, criterion, device="cuda"):
     images, labels =image.to(device), label.to(device)
 
     # Forward pass ➡
-    #print(image.shape)
     outputs = model(images)
 
     loss = criterion(outputs, labels)
@@ -40,15 +38,13 @@ def train_batch(image, label, model, optimizer, criterion, device="cuda"):
 
     # Step with optimizer
     optimizer.step()
-    #scheduler.step()
 
     return loss
 
 
 def train_log(loss, example_ct, epoch):
     # Where the magic happens
-    wandb.log({"epoch": epoch, "loss": loss}, step=example_ct)
-    #print(f"Loss after {str(example_ct).zfill(5)} examples: {loss:.3f}")
+    wandb.log({"epoch": epoch, "Train Loss": loss}, step=example_ct)
 
 
 ############################################################################################
@@ -75,7 +71,6 @@ def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_l
     if shuffle_loader:
         loader = shuffle(loader)
 
-    #loader = create_minibatch(loader, n_batch)
 
     for images, labels in zip(loader[0], loader[1]):
         loss = train_batch(images, labels, model, optimizer, criterion)
@@ -85,20 +80,19 @@ def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_l
         # Report metrics every 25th batch
         if ((ct[0] + 1) % 25) == 0:
             e_info[1].set_postfix({'Loss': f"{loss:.6f}"})
-            #print("Loss",loss)
-            #train_log(loss, e_info[0], e_info[0])
+            train_log(loss, e_info[0], e_info[0])
     return [ct[0], ct[1]]
 
 
-
-def train_model(model, loader, criterion, optimizer, config):
+def train_model(model, loader, criterion, optimizer, config, n_show_image = 50):
     # Tell wandb to watch what the model gets up to: gradients, weights, and more! 
-    #wandb.watch(model, criterion, log="all", log_freq=10)
+    wandb.watch(model, criterion, log="all", log_freq=10)
 
     model.train()
 
     # Run training and track with wandb       
     ct = [0,0] # batch_ct, example_ct
+    X = loader[0][0].to("cuda")
 
     epochs = tqdm(range(config["epochs"]), desc="Train {0}: ".format(model.get_name()))
     e_info = [None, epochs]
@@ -106,4 +100,9 @@ def train_model(model, loader, criterion, optimizer, config):
     for epoch in epochs:
         e_info[0] = epoch
         ct = train_batch_model(loader, model, optimizer, criterion, ct, e_info)
-        #scheduler.step()
+
+        if epoch%n_show_image == 0:
+            with torch.no_grad():
+                AB = model(X)
+                size = X.shape[2]
+                save_1_image(AB, X, size, "image_log", "/img_"+str(epoch))
