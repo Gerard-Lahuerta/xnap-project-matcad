@@ -37,15 +37,23 @@ import os
 ##### ADJUSTING DATASET ###############################################################################
   
 def crop_center(X,cropx,cropy):
-    """
-    Input: array X --> asymmetric image
-            int cropx --> horizontal dimension limit of the image
-            int cropy --> vertical dimension limit of the image
+    '''
+    INPUT: 
+        --> X: list of images
+        --> cropx: int (size of x axis of the image).
+        --> cropy: int (size of y axis of the image).
 
-    Output: array ret --> initial image (array) transformed
+    OUTPUT:
+        --> ret: list of images (crop center).
 
-    Description: transforms the initial asymmetric image (NumPy array) into a symmetric image (an square image)
-    """
+    ABOUT IT:
+        --> Crop the center of a list (X) of images into an image of dimensions cropx x cropy.
+
+    RELLEVANT INFORMATION:
+        --> If some image in the list has less dimension (in one axis) than the needed to the crop
+            it will be ignored (not croped) and not be included in the returned list of images.
+    '''
+
     ret = []
     for img in tqdm(X, desc="Adjusting Images"):
         y = img.shape[0]
@@ -57,33 +65,50 @@ def crop_center(X,cropx,cropy):
             ret.append(img)
     return ret
 
+
 def shuffle(loader):
-    """
-    Input: list of two NumPy arrays loader --> list of arrays, related to images of the train set (0) and test set (1)
+    '''
+    INPUT:
+        --> loader: list of 2 list (input list and label list respectively).
+    
+    OUTPUT:
+        --> ret: list of 2 list (input list and label list respectively).
 
-    Output: list of two NumPy arrays [train, test] --> same list of arrays, related to images of the train set (0)
-                                                        and images from the test set (1)
+    ABOUT IT:
+        --> Shuffle randomly the input list and the label list but in the same way (mantaining the 
+            input and the label in the same index after shuffling).
+    '''
 
-    Description: shuffles the samples from a dataset (loader)
-    """
     p = np.random.permutation(len(loader[0])) # random index list to permutate randomly the loader
     train = [loader[0][i] for i in p]
     test = [loader[1][i] for i in p]
     return [train, test]
 
+
 def get_data_model(path, split = 0.95, train = True):
-    """
-    Input: string path --> directory where the data (images) is stored
-            double split --> percentage (value between 0 and 1) that indicates the number of images that we will use
-            bool train --> marker that indicates if the data is for training or testing the model
+    '''
+    INPUT:
+        --> path: string with the directory to obtain the images to train/test the model.
+        --> split = 0.95: float between 0 and 1 to select the percentage of images of the folder to
+                          return after treating.
+        --> train = True: bool, determines if the returned list of images are for testing or training.
+    
+    OUTPUT:
+        --> ret: list of 2 list, input (grey-scale image) and label (AB-scale image) respectively.
 
-    Output: list of two NumPy arrays [L, AB] --> for each image of the data, we will transform it to two
-                                                        NumPy arrays L and AB. The first is related to the
-                                                        grey original image and the second one to the colored image
+    ABOUT IT:
+        --> Save all images in the directory selected by the parameter "path", returns the "split" 
+            percentage of them in gray-scale version (first position of the array returned) and the
+            AB version (second position of the array returned).
 
-    Description: Transform the input image dataset (.jpg) into X,Y data (arrays of grey and colored images) to do
-                    the test and train process of the model
-    """
+    RELLEVANT INFORMATION:
+        --> If the shape of the images in the folder indicated by the "path" parameter variable
+            are not simetric, the function will call to the "crop_center" function explained above to 
+            crop the image into a 256 x 256 image.
+        --> If train = True selects the first split*"number of images in the directory" images.
+        --> If train = False selects the last split*"number of images in the directory" images.
+    '''
+
     # FRAGMENTATION OF THE DATASET
     X = []
     for filename in os.listdir(path):
@@ -99,7 +124,7 @@ def get_data_model(path, split = 0.95, train = True):
 
     # DETERMINING SIZE OF IMAGE
     size = X[0].shape 
-    if size[0] != size[1]: # not symmetric image --> adjust image to make it symmetric (crop it)
+    if size[0] != size[1]: # not simetric image --> ajust image to make it simetric (crop it)
         size = 256
         X = crop_center(X,256,256)
     else: 
@@ -128,18 +153,31 @@ def get_data_model(path, split = 0.95, train = True):
 
     return [L, AB]
 
+
 def get_data(config):
-    """
-    Input: dict config --> dictionary that indicates the initial configuration (parameters such as
-                            the name of the model, learning rate, epochs, ...) of the model
+    '''
+    INPUT:
+        --> config: dict, has to contain the keys "dat_set" and (depending) "train" or "split".
+            -> config["data_set"]: string with the word "default" or the path to the dataset (images).
+            -> config["model"]: string, (usefull if "default") generates the dataset of the model.
+            -> config["split]: float, (usefull if not "default") determines the percentage the data to
+                               return in train list contained in the folder selected by the path.
 
-    Output: two lists of two NumPy arrays each [Xtrain, Ytrain], [Xtest, Ytest] --> same output as get_data_model, but
-                                                                                    twice (one for training data and
-                                                                                    one for testing data)
+    OUTPUT:
+        --> train: list of 2 list with grey-scale and the AB images (respectively).
+        --> test: list of 2 list with grey-scale and the AB images (respectively).
 
-    Description: Depending on the input configuration, it gets the adequate transformed Test and Train data
-                    for the model
-    """
+    ABOUT IT:
+        --> If mode "default": returns the default dataset of each model to train and test.
+        --> If mode "path": returns the dataset selected in the path to train and test.
+
+    RELLEVANT INFORMATION:
+        --> If a path directory is pased in the parameter "path" it will return a test train with a
+            0.01 percent of all the dataset includen in it.
+        --> If while selecting "default" mode the config dictionary with the key "model" not contains
+            a correct model, it will return (by default) the dataset of model 3. 
+    '''
+
     if config["data_set"] == "default": # default mode --> original dataset of each model
         if config["model"] == "Model 1":
             train = get_data_model("data/data_1/", split = 0.5)
@@ -164,14 +202,22 @@ def get_data(config):
 ##### BUILDING MODEL ##################################################################################
 
 def built_model(config, device="cuda"):
-    """
-    Input: dict config --> dictionary that indicates the initial configuration (parameters such as
-                            the name of the model, learning rate, epochs, ...) of the model
+    '''
+    INPUT:
+        --> config: dict, has to contain the key "model".
+            -> config["model"]: string, name of the model to inicializate.
 
-    Output: class model --> object of one of the classes created at models.py related to the different models studied
+    OUTPUT:
+        --> model: CNN encode-deconder model (pytorch).
 
-    Description: Initializes the model using cuda according to the "model" value of the initial configuration
-    """
+    ABOUT IT:
+        --> Inicialice the model selected by the dictionary "config" using the key "model".
+
+    RELLEVANT INFORMATION:
+        --> By default and if the model selected is not in the ones we distribute in this proyect, the
+            function will return the model ColorizationNet.
+    '''
+
     if config["model"] == "Model 1":
         model = Model1().to(device)
 
@@ -189,19 +235,40 @@ def built_model(config, device="cuda"):
 
     return model
 
+
 def RMSELoss(yhat,y):
+    '''
+    INPUT:
+        --> yhat: torch.Tensor(), output of the model.
+        --> y: torch.Tensor(), label of the input.
+    
+    OUTPUT:
+        --> ret: float, loss of the model.
+    
+    ABOUT IT:
+        --> RMSE function loss programed to be used as a criterion in the trainig of the model.
+    '''
+
     return torch.sqrt(torch.mean((yhat-y)**2)) 
 
+
 def set_criterion(config):
-    """
-    Input: dict config --> dictionary that indicates the initial configuration (parameters such as
-                            the name of the model, learning rate, epochs, ...) of the model
+    '''
+    INPUT:
+        --> config: dict, has to contain the key "criterion".
+            -> config["criterion"]: string, type of function to modelate the loss of the model.
 
-    Output: torch.nn class criterion --> object of the torch.nn class related to the model criterion specified
-                                            in the initial configuration
+    OUTPUT:
+        --> criterion: function, used to optimice the model while is training.
 
-    Description: It defines the criterion of the model depending on the "criterion" value of the configuration
-    """
+    ABOUT IT:
+        --> Selects the loss function to train the model.
+
+    RELLEVANT INFORMATION:
+        --> By default and if the criterion selected is not in the ones we distribute in this proyect, the
+            function will return the criterion MSE.
+    '''
+
     if config["criterion"] == "RMSE":
         criterion = RMSELoss
 
@@ -213,17 +280,26 @@ def set_criterion(config):
     
     return criterion
 
+
 def set_optimizer(config, model):
-    """
-    Input: dict config --> dictionary that indicates the initial configuration (parameters such as
-                            the name of the model, learning rate, epochs, ...) of the model
-            class model --> object of one of the classes created at models.py related to the different models studied
+    '''
+    INPUT:
+        --> config: dict, has to contain the key "optimizer" and "learning_rate.
+            -> config["optimizer"]: string, type of function to modelate the loss of the model.
+            -> config["learning_rate"]: float, learning rate of the optimizer.
+        --> model: CNN encoder-decoder model (pytorch).
 
-    Output: torch.optim class optimizer --> object of the torch.optim class related to the model optimizer specified
-                                            in the initial configuration
+    OUTPUT:
+        --> optimizer: function, used to optimice the model while is training.
 
-    Description: It defines the optimizer of the model depending on the "optimizer" value of the configuration
-    """
+    ABOUT IT:
+        --> Selects the optimizer function to train the model.
+
+    RELLEVANT INFORMATION:
+        --> By default and if the optimizer selected is not in the ones we distribute in this proyect, the
+            function will return the optimizer Adam.
+    '''
+
     if config["optimizer"] == "Adagrad":
         optimizer = torch.optim.Adagrad(model.parameters(), lr=config["learning_rate"])
     
@@ -241,24 +317,31 @@ def set_optimizer(config, model):
     
     return optimizer
     
+
 def make(config, device = "cuda"):
-    """
-    Input: dict config --> dictionary that indicates the initial configuration (parameters such as
-                            the name of the model, learning rate, epochs, ...) of the model
+    '''
+    INPUT:
+        --> config: dict, has to contain the keys "model", "data_set", "split", "criterion", 
+                    "optimizer" and "learning_rate".
+            -> config["model"]: config["model"]: string, name of the model to inicializate.
+            -> config["data_set"]: string with the word "default" or the path to the dataset (images).
+            -> config["split"]: float, determines the percentage of the data (not default) returned.
+            -> config["criterion"]: string, type of function to modelate the loss of the model.
+            -> config["optimizer"]: string, type of function to modelate the loss of the model.
+            -> config["learning_rate"]: float, learning rate of the optimizer.
 
-    Output: class model --> object of one of the classes created at models.py related to the different models studied
-            list of two NumPy arrays train --> The first array is related to the grey original images of the train
-                                                dataset and the second array to the same colored images
-            list of two NumPy arrays test --> The first array is related to the grey original images of the test
-                                                dataset and the second array to the same colored images
-            torch.nn class criterion --> object of the torch.nn class related to the model criterion specified
-                                            in the initial configuration
-            torch.optim class optimizer --> object of the torch.optim class related to the model optimizer specified
-                                            in the initial configuration
+    OUTPUT:
+        --> model: model: CNN encode-deconder model (pytorch).
+        --> train: list of 2 list with grey-scale and the AB images (respectively).
+        --> test: list of 2 list with grey-scale and the AB images (respectively).
+        --> criterion: function, used to optimice the model while is training.
+        --> optimizer: function, used to optimice the model while is training.
 
-    Description: With the "config" dictionary as a parameter, it calls the adequate functions to initialize the model
-                    and prepare it for training and testing
-    """
+    ABOUT IT:
+        --> Builts de model estructure, dataset and the functions needed to train/test the model
+            (criterion and optimizer).
+    '''
+
     model = built_model(config)
     train, test = get_data(config)
     criterion = set_criterion(config)
@@ -270,61 +353,44 @@ def make(config, device = "cuda"):
 ##### DATA SAVING #####################################################################################
 
 def save_image(output_AB, output_L, size, path, name = "/img_"):
-    """
-    Input: output_AB --> colored image
-            output_L --> grey image
-            int size --> images size
-            str path --> folder where we will save the images
-            str name --> name per defect that will have the images to save
+    '''
+    INPUT:
+        --> output_AB: tensor of 3 x size x size, output of the model (image in AB-scale).
+        --> output_L: tensor of 3 x size x size, input of the model (image in grey-scale).
+        --> size: int, dimensions of the image (image has to be scared).
+        --> path: string, folder path to save the results of the image.
+        --> name = "/img_": string, initial name of each image to save.
 
-    Description: Calling the "save_1_image" function, saves the images kept in "output_AB"
-                    and "output_L" in the path folder
-    """
+    OUTPUT:
+        --> None.
+
+    ABOUT IT:
+        --> Save images fragmented in a tensor of grey-scale and a tensor of AB-scale.
+    '''
+
     output = tqdm(zip(output_AB, output_L, range(len(output_AB))), desc="Saving images")
     for AB, L, i in output:
         save_1_image(AB, L, size, path, name+str(i+1))
 
-def save_1_image(AB, X, size, path, name):
-    """
-    Input: AB --> colored image
-            X --> grey image
-            int size --> images size
-            str path --> folder where we will save the images
-            str name --> name per defect that will have the images to save
 
-    Description: transforms the initial NumPy arrays (AB, X) into images (.png) and saves them in the path folder
-    """
+def save_1_image(AB, X, size, path, name):
     cur = np.zeros((size, size, 3)) # create a size x size x 3 (the 3th dimension corresponding to LAB)
     cur[:, :, 0] = np.array(X[0][0, :, :].cpu()) # add the L component 
     cur[:, :, 1:] = np.array(128 * AB[0].cpu().permute(1, 2, 0)) # add the AB dimensions (model output)
     imsave(path + name + ".png", (lab2rgb(cur) * 255).astype(np.uint8)) # saving image in its folder
 
-def save_model(model):
-    """
-    Input: class model --> object of one of the classes created at models.py related to the different models studied
 
-    Description: It saves the model weights on the "weights" folder
-    """
+def save_model(model):
     path = "weights/Weights "+model.get_name()+".pt" # path + file name of the model weights to save
     torch.save(model.state_dict(), path)
 
+
 def import_model(model):
-    """
-    Input: class model --> object of one of the classes created at models.py related to the different models studied
-
-    Output: class model --> object of one of the classes created at models.py related to the different models studied
-
-    Description: It takes an object of the class
-    """
     path = "weights/Weights "+model.get_name()+".pt" # path + file name of the model weights
     model.load_state_dict(torch.load(path)) # importing trained model
     return model
 
-def delete_files(dir = "image_log"):
-    """
-    Input: string dir --> folder with files that we want to delete
 
-    Description: Deletes all the files in "dir"
-    """
+def delete_files(dir = "image_log"):
     for f in os.listdir(dir):
         os.remove(os.path.join(dir, f)) # deleting file of the "dir" folder
