@@ -12,6 +12,9 @@
     Information about the program in: https://github.com/DCC-UAB/xnap-project-matcad_grup_6.git
 """
 
+
+###### IMPORTS #########################################################################################################
+
 import random
 import wandb
 
@@ -24,6 +27,10 @@ from test import *
 from utils.utils import *
 
 import warnings
+
+
+###### CONFIGURATIONS ##################################################################################################
+
 warnings.filterwarnings('ignore')
 
 # Ensure deterministic behavior
@@ -37,43 +44,21 @@ torch.cuda.manual_seed_all(hash("so runs are repeatable") % 2**32 - 1)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-
-
-'''
-def model_pipeline(cfg:dict) -> None:
-    # tell wandb to get started
-    with wandb.init(project="pytorch-demo", config=cfg):
-      # access all HPs through wandb.config, so logging matches execution!
-      config = wandb.config
-
-      # make the model, data, and optimization problem
-      model, train_loader, test_loader, criterion, optimizer = make(config)
-
-      # and use them to train the model
-      train(model, train_loader, criterion, optimizer, config)
-
-      # and test its final performance
-      test(model, test_loader)
-
-    return model
-'''
-
+###### MAIN PROGRAM ####################################################################################################
 
 if __name__ == "__main__":
     wandb.login()
 
+    # Configuration of the image colorization
     config = dict(
         model = "Model 1",
         epochs = 1000,
 
         learning_rate = 0.0001,
-        sch = "StepLR",
-        params = {"step_size": 30, "gamma": 0.1},
-
         optimizer = "Adam",
         criterion = "MSE",
 
-        data_set = "default", #"data/Captioning/",#"data/data_2/Train/", #"data/Captioning/", ##data/PERROS/",#"default", "data/Captioning/" 
+        data_set = "default", # "data/data_2/Train/", data/PERROS/", "data/Captioning/"
         split = 0.25,
 
         save_weights = True,
@@ -84,8 +69,10 @@ if __name__ == "__main__":
         test = True
         )
 
+    # Init wandb for tracking the evolution
     with wandb.init(project="proyect-xnap", config=config):
 
+        # Building of the model with the chosen configuration
         model, train_loader, test_loader, criterion, optimizer = make(config=config)
 
         if config["import_weights"]:
@@ -99,4 +86,3 @@ if __name__ == "__main__":
 
         if config["save_weights"]:
             save_model(model)
-
