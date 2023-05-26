@@ -1,3 +1,17 @@
+"""
+    Auxiliar function file: data import, build model and saving data
+    @Version: 1.0.0
+
+    @Authors:
+            --> Ona Sánchez -- 1601181
+            --> Gerard Lahuerta -- 1601350
+            --> Bruno Tejedo Miniéri
+
+    @Copyright (c) 2023 All Right Reserved
+
+    Information about the program in: https://github.com/DCC-UAB/xnap-project-matcad_grup_6.git
+"""
+
 import wandb
 import torch
 import torch.nn 
