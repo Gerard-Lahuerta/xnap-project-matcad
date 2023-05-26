@@ -236,6 +236,6 @@ def import_model(model):
     model.load_state_dict(torch.load(path))
     return model
 
-def delete_files(path = "image_log/"):
-    for f in os.listdir(path):
+def delete_files(dir = "image_log"):
+    for f in os.listdir(dir):
         os.remove(os.path.join(dir, f))

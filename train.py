@@ -14,7 +14,7 @@
 
 from tqdm.auto import tqdm
 import wandb
-from utils.utils import shuffle, save_1_image
+from utils.utils import shuffle, save_1_image, delete_files
 import torch
 
 '''
@@ -98,9 +98,11 @@ def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_l
     return [ct[0], ct[1]]
 
 
-def train_model(model, loader, criterion, optimizer, config, n_show_image = 50):
+def train_model(model, loader, criterion, optimizer, config, n_show_image = 10):
     # Tell wandb to watch what the model gets up to: gradients, weights, and more! 
     wandb.watch(model, criterion, log="all", log_freq=10)
+
+    delete_files()
 
     model.train()
 
