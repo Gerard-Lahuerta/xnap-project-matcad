@@ -12,34 +12,16 @@
     Information about the program in: https://github.com/DCC-UAB/xnap-project-matcad_grup_6.git
 """
 
+
+###### IMPORTS #########################################################################################################
+
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
+import torchvision.models as models
 
-# Conventional and convolutional neural network
 
-class ConvNet(nn.Module):
-    def __init__(self, kernels, classes=10):
-        super(ConvNet, self).__init__()
-        
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(1, kernels[0], kernel_size=5, stride=1, padding=2),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(16, kernels[1], kernel_size=5, stride=1, padding=2),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.fc = nn.Linear(7 * 7 * kernels[-1], classes)
-        
-    def forward(self, x):
-        out = self.layer1(x)
-        out = self.layer2(out)
-        out = out.reshape(out.size(0), -1)
-        out = self.fc(out)
-        return out
-    
-#############################################################################
+###### MODELS FROM STARTING POINT ######################################################################################
 
 class Model1(nn.Module):
     def __init__(self):
@@ -73,14 +55,17 @@ class Model1(nn.Module):
             nn.ConvTranspose2d(16, 2, (3,3), padding=1, stride = 1),
             nn.Tanh()
         )
-    
+
+    # Steps of the model
     def forward(self, x):
         x = self.encoder(x)
         x = self.decoder(x)
         return x
-    
+
     def get_name(self):
         return self.name
+
+
 
 class Model2(nn.Module):
     def __init__(self):
@@ -121,6 +106,7 @@ class Model2(nn.Module):
             nn.Upsample(scale_factor= 2),
         )
 
+    # Steps of the model
     def forward(self, x):
         x = self.encoder(x)
         x = self.decoder(x)
@@ -128,6 +114,7 @@ class Model2(nn.Module):
    
     def get_name(self):
         return self.name
+
 
 class Model3(nn.Module):
     def __init__(self):
@@ -179,7 +166,7 @@ class Model3(nn.Module):
         nn.ReLU()
         return fusion_aux
 
-
+    # Steps of the model
     def forward(self, x):
         x = self.encoder(x)
         x = self.fusion(x)
@@ -188,12 +175,16 @@ class Model3(nn.Module):
 
     def get_name(self):
         return self.name
-    
-#######################################################################################
+
+
+###### OTHER AUTOENCODERS ##############################################################################################
 
 class ConvAE(nn.Module):
     def __init__(self):
         super(ConvAE, self).__init__()
+
+        self.name = "ConVAE"
+
         self.encoder = nn.Sequential(
             nn.Conv2d(1, 16, 3, stride=3, padding=1),  # b, 16, 10, 10
             nn.ReLU(),
@@ -202,6 +193,7 @@ class ConvAE(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(2, stride=1)  # b, 8, 2, 2
         )
+
         self.decoder = nn.Sequential(
             nn.ConvTranspose2d(8, 16, 3, stride=2),
             nn.ReLU(),
@@ -211,8 +203,7 @@ class ConvAE(nn.Module):
             nn.Sigmoid()    
         )
 
-        self.name = "ConVAE"
-
+    # Steps of the model
     def forward(self, x):
         x = self.encoder(x)
         x = self.decoder(x)
@@ -222,11 +213,12 @@ class ConvAE(nn.Module):
         return self.name
 
 
-import torchvision.models as models
-
 class ColorizationNet(nn.Module):
     def __init__(self, input_size=128):
         super(ColorizationNet, self).__init__()
+
+        self.name = "ColorizationNet"
+
         MIDLEVEL_FEATURE_SIZE = 128
 
         ## First half: ResNet
@@ -256,7 +248,6 @@ class ColorizationNet(nn.Module):
             nn.Upsample(scale_factor=2)
         )
 
-        self.name = "ColorizationNet"
 
     def forward(self, input):
 
