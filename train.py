@@ -77,7 +77,7 @@ def train_model(model, loader, criterion, optimizer, config, n_show_image=10):
     model.train()
 
     ct = [0, 0]  # batch_ct, image_ct
-    X = loader[0][0].to("cuda")
+    L = loader[0][0].to("cuda")
 
     # Tracking the evolution of the train
     epochs = tqdm(range(config["epochs"]), desc="Train {0}: ".format(model.get_name()))
@@ -92,6 +92,6 @@ def train_model(model, loader, criterion, optimizer, config, n_show_image=10):
         # Track of the colorizaton
         if epoch % n_show_image == 0:
             with torch.no_grad():
-                AB = model(X)
-                size = X.shape[2]
-                save_1_image(AB, X, size, "image_log", "/img_" + str(epoch))
+                AB = model(L)
+                size = L.shape[2]
+                save_1_image(AB, L, size, "image_log", "/img_" + str(epoch))
