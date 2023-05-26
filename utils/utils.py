@@ -374,6 +374,22 @@ def save_image(output_AB, output_L, size, path, name = "/img_"):
 
 
 def save_1_image(AB, X, size, path, name):
+    '''
+    INPUT:
+        --> AB: tensor of 3 x size x size, output of the model (image in AB-scale).
+        --> X: tensor of 3 x size x size, input of the model (image in grey-scale).
+        --> size: int, dimensions of the image (image has to be scared).
+        --> path: string, folder path to save the results of the image.
+        --> name: string, name of the image to be saved.
+
+    OUTPUT:
+        --> None.
+
+    ABOUT IT:
+        --> Gathers the parts of the image fragmented in a tensor of grey-scale and a tensor of AB-scale and saves
+            the resulting png image in the directory path.
+    '''
+    
     cur = np.zeros((size, size, 3)) # create a size x size x 3 (the 3th dimension corresponding to LAB)
     cur[:, :, 0] = np.array(X[0][0, :, :].cpu()) # add the L component 
     cur[:, :, 1:] = np.array(128 * AB[0].cpu().permute(1, 2, 0)) # add the AB dimensions (model output)
@@ -381,16 +397,50 @@ def save_1_image(AB, X, size, path, name):
 
 
 def save_model(model):
+    '''
+    INPUT:
+        --> model: CNN encoder-decoder model (pytorch).
+
+    OUTPUT:
+        --> None.
+
+    ABOUT IT:
+        --> Saves the weights of the model to the file indicated in path.
+    '''
+    
     path = "weights/Weights "+model.get_name()+".pt" # path + file name of the model weights to save
     torch.save(model.state_dict(), path)
 
 
 def import_model(model):
+    '''
+    INPUT:
+        --> model: CNN encoder-decoder model (pytorch).
+
+    OUTPUT:
+        --> model: Trained CNN encoder-decoder model (pytorch).
+
+    ABOUT IT:
+        --> Imports the weights of the model from the file indicated in path, thus importing the already trained model.
+    '''
+    
     path = "weights/Weights "+model.get_name()+".pt" # path + file name of the model weights
     model.load_state_dict(torch.load(path)) # importing trained model
     return model
 
 
 def delete_files(dir = "image_log"):
+    '''
+    INPUT:
+        --> dir: string, path to the directory with the images generated with log during the training.
+
+    OUTPUT:
+        --> None.
+
+    ABOUT IT:
+        --> Deletes the register log of the previous train in the directory dir, in order to save only the one that
+            will be generated in the running execution.
+    '''
+    
     for f in os.listdir(dir):
         os.remove(os.path.join(dir, f)) # deleting file of the "dir" folder
