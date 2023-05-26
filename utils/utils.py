@@ -227,31 +227,15 @@ def save_1_image(AB, X, size, path, name):
     imsave(path + name + ".png", (lab2rgb(cur) * 255).astype(np.uint8))
 
 def save_model(model):
-    doc = "weights/Weights "+model.get_name()+".json"
-    weights = model.state_dict()
-
-    weight = tqdm(weights.items(), desc="Saving model weights")
-    weight_dic = {}
-    for key, value in weight:
-        weight_dic[key] = value.tolist()  # Convert tensors to lists
-
-    # Save the JSON to a file
-    with open(doc, 'w') as file:
-        json.dump(weight_dic, file)
+    path = "weights/Weights "+model.get_name()+".pt"
+    torch.save(model.state_dict(), path)
 
 
 def import_model(model):
-    doc = "weights/Weights "+model.get_name()+".json"
-
-    with open(doc, 'r') as file:
-        weights = json.load(file)
-
-    # Convert the JSON-serialized state_dict back to PyTorch tensors
-    weight = tqdm(weights.items(), desc="Importing model weights")
-    weight_dic = {}
-    for key, value in weight:
-        weight_dic[key] = torch.tensor(value)
-
-    model.load_state_dict(weight_dic)
+    path = "weights/Weights "+model.get_name()+".pt"
+    model.load_state_dict(torch.load(path))
     return model
 
+def delete_files(path = "image_log/"):
+    for f in os.listdir(path):
+        os.remove(os.path.join(dir, f))
