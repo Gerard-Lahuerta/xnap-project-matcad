@@ -4,20 +4,17 @@ import torch.nn
 import torchvision
 import torchvision.transforms as transforms
 from models.models import *
-import matplotlib.pyplot as plt
 
 import json
 from tqdm.auto import tqdm
 import random
 
-from PIL import Image
 import os
 import numpy as np
 from skimage import io, color
 
 from skimage.io import imsave
-from skimage.color import rgb2lab, lab2rgb, rgb2gray
-from imgaug import augmenters as iaa
+from skimage.color import lab2rgb
 
 '''
 def get_data(slice=1, train=True):
@@ -56,7 +53,6 @@ def make(config, device="cuda"):
     return model, train_loader, test_loader, criterion, optimizer
 '''
     
-###################################################################################
 def crop_center(X,cropx,cropy):
     ret = []
     for img in tqdm(X, desc="Adjusting Images"):
@@ -67,19 +63,13 @@ def crop_center(X,cropx,cropy):
             starty = y//2-(cropy//2)
             img = img[starty:starty + cropy, startx:startx + cropx, :]
             ret.append(img)
-    #print("-->",len(X)-len(ret),"images discarted  ---  train with",len(ret),"images")
     return ret
 
 def get_data_model(path, split = 0.95, train = True):
 
-    # torchvision.transforms.functional.crop(img: Tensor, top: int, left: int, height: int, width: int) --> cuadrado
-    # torchvision.transforms.CenterCrop(size)
-
     X = []
     for filename in os.listdir(path):
         X.append(io.imread(path + filename)[:,:,0:3])
-
-    #random.shuffle(X)
 
     split = int(split * len(X))
     if not train:
@@ -198,32 +188,34 @@ def set_optimizer(config, model):
 def make(config, device = "cuda"):
 
     model = built_model(config)
-
     train, test = get_data(config)
-
     criterion = set_criterion(config)
-
     optimizer = set_optimizer(config, model)
-
-    #scheduler = set_scheduler(config["sch"], optimizer, params = config["params"])
 
     return model, train, test, criterion, optimizer#, scheduler
  
 
-def save_image(output_AB, output_L, size, path):
+def save_image(output_AB, output_L, size, path, name = "/img_"):
     output = tqdm(zip(output_AB, output_L, range(len(output_AB))), desc="Saving images")
-    for AB, L, i in output: #zip(output_AB, output_L, range(len(output_AB))):
+    for AB, L, i in output:
+        save_1_image(AB, L, size, path, name+str(i+1))
+        '''
         cur = np.zeros((size, size, 3))
         cur[:,:,0] = np.array(L[0][0,:,:].cpu())
         cur[:,:,1:] = np.array(128*AB[0].cpu().permute(1,2,0))
-        imsave(path+"/img_"+str(i+1)+".png", (lab2rgb(cur)*255).astype(np.uint8))
+        imsave(path+name+str(i+1)+".png", (lab2rgb(cur)*255).astype(np.uint8))
+        '''
 
+def save_1_image(AB, X, size, path, name):
+    cur = np.zeros((size, size, 3))
+    cur[:, :, 0] = np.array(X[0][0, :, :].cpu())
+    cur[:, :, 1:] = np.array(128 * AB[0].cpu().permute(1, 2, 0))
+    imsave(path + name + ".png", (lab2rgb(cur) * 255).astype(np.uint8))
 
 def save_model(model):
     doc = "weights/Weights "+model.get_name()+".json"
     weights = model.state_dict()
 
-    # Convert the state_dict to a JSON-serializable format
     weight = tqdm(weights.items(), desc="Saving model weights")
     weight_dic = {}
     for key, value in weight:
@@ -249,13 +241,3 @@ def import_model(model):
     model.load_state_dict(weight_dic)
     return model
 
-def set_scheduler(sch, optim, params = None):
-    if sch == "StepLR":
-        scheduler = torch.optim.lr_scheduler.StepLR(optim, step_size = params["step_size"], gamma = params["gamma"])
-
-    elif sch == "ExpoLR":
-        scheduler = torch.optim.lr_scheduler.ExponentialLR(optim, gamma = params["gamma"])
-
-    # torch.optim.lr_scheduler.ReduceLROnPlateau(optim)
-
-    return scheduler
