@@ -1,17 +1,13 @@
-import os
 import random
 import wandb
 
 import numpy as np
 import torch
 import torch.nn as nn
-import torchvision
-import torchvision.transforms as transforms
 
 from train import *
 from test import *
 from utils.utils import *
-from tqdm.auto import tqdm
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -26,9 +22,6 @@ torch.cuda.manual_seed_all(hash("so runs are repeatable") % 2**32 - 1)
 # Device configuration
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-# remove slow mirror from list of MNIST mirrors
-torchvision.datasets.MNIST.mirrors = [mirror for mirror in torchvision.datasets.MNIST.mirrors
-                                      if not mirror.startswith("http://yann.lecun.com")]
 
 
 
@@ -53,23 +46,23 @@ def model_pipeline(cfg:dict) -> None:
 
 
 if __name__ == "__main__":
-    #wandb.login()
+    wandb.login()
 
     config = dict(
-        model = "Model 3",
-        epochs = 100,
+        model = "Model 1",
+        epochs = 1000,
 
-        learning_rate = 0.00001,
+        learning_rate = 0.0001,
         sch = "StepLR",
         params = {"step_size": 30, "gamma": 0.1},
 
         optimizer = "Adam",
         criterion = "MSE",
 
-        data_set = "data/Captioning/",#"data/data_2/Train/", #"data/Captioning/", ##data/PERROS/",#"default", "data/Captioning/" 
-        split = 0.90,
+        data_set = "default", #"data/Captioning/",#"data/data_2/Train/", #"data/Captioning/", ##data/PERROS/",#"default", "data/Captioning/" 
+        split = 0.25,
 
-        save_weights = False,
+        save_weights = True,
         import_weights = False,
         save_images = True,
 
@@ -77,17 +70,19 @@ if __name__ == "__main__":
         test = True
         )
 
-    model, train_loader, test_loader, criterion, optimizer = make(config=config)
+    with wandb.init(project="proyect-xnap", config=config):
 
-    if config["import_weights"]:
-        model = import_model(model)
-    
-    if config["train"]:
-        train_model(model, train_loader, criterion, optimizer, config)
+        model, train_loader, test_loader, criterion, optimizer = make(config=config)
 
-    if config["test"]:
-        test_model(model, test_loader, criterion, save = config["save_images"])
+        if config["import_weights"]:
+            model = import_model(model)
 
-    if config["save_weights"]:
-        save_model(model)
+        if config["train"]:
+            train_model(model, train_loader, criterion, optimizer, config)
+
+        if config["test"]:
+            test_model(model, test_loader, criterion, save = config["save_images"])
+
+        if config["save_weights"]:
+            save_model(model)
 
