@@ -1,8 +1,5 @@
 import wandb
 import torch
-from skimage.io import imsave
-from skimage.color import rgb2lab, lab2rgb, rgb2gray
-import numpy as np
 
 from utils.utils import save_image
 from tqdm.auto import tqdm
@@ -50,8 +47,7 @@ def test_model(model, test_loader, criterion, save:bool = True):
 
     with torch.no_grad():
         output_AB, output_L, loss = test(model, test_loader, criterion)
-        print("Test loss = {:.6f}".format(loss))
-        #wandb.log({"Loss": loss})
+        wandb.log({"Test Loss": loss})
 
     if save:
         path = "results/"+model.get_name()
