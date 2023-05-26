@@ -12,6 +12,9 @@
     Information about the program in: https://github.com/DCC-UAB/xnap-project-matcad_grup_6.git
 """
 
+
+###### IMPORTS ########################################################################################
+
 import wandb
 import torch
 import torch.nn 
@@ -30,43 +33,9 @@ from skimage import io, color
 from skimage.io import imsave
 from skimage.color import lab2rgb
 
-'''
-def get_data(slice=1, train=True):
-    full_dataset = torchvision.datasets.MNIST(root=".",
-                                              train=train, 
-                                              transform=transforms.ToTensor(),
-                                              download=True)
-    #  equiv to slicing with [::slice] 
-    sub_dataset = torch.utils.data.Subset(
-      full_dataset, indices=range(0, len(full_dataset), slice))
-    
-    return sub_dataset
 
-
-def make_loader(dataset, batch_size):
-    loader = torch.utils.data.DataLoader(dataset=dataset,
-                                         batch_size=batch_size, 
-                                         shuffle=True,
-                                         pin_memory=True, num_workers=2)
-    return loader
-
-def make(config, device="cuda"):
-    # Make the data
-    train, test = get_data(train=True), get_data(train=False)
-    train_loader = make_loader(train, batch_size=config.batch_size)
-    test_loader = make_loader(test, batch_size=config.batch_size)
-
-    # Make the model
-    model = ConvNet(config.kernels, config.classes).to(device)
-
-    # Make the loss and optimizer
-    criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(
-        model.parameters(), lr=config.learning_rate)
-    
-    return model, train_loader, test_loader, criterion, optimizer
-'''
-    
+##### ADJUSTING DATASET ###############################################################################
+  
 def crop_center(X,cropx,cropy):
     ret = []
     for img in tqdm(X, desc="Adjusting Images"):
@@ -78,6 +47,12 @@ def crop_center(X,cropx,cropy):
             img = img[starty:starty + cropy, startx:startx + cropx, :]
             ret.append(img)
     return ret
+
+def shuffle(loader):
+    p = np.random.permutation(len(loader[0]))
+    train = [loader[0][i] for i in p]
+    test = [loader[1][i] for i in p]
+    return [train, test]
 
 def get_data_model(path, split = 0.95, train = True):
 
@@ -120,7 +95,6 @@ def get_data_model(path, split = 0.95, train = True):
 
     return [Xtest, Ytest]
 
-
 def get_data(config):
     if config["data_set"] == "default":
         if config["model"] == "Model 1":
@@ -142,6 +116,8 @@ def get_data(config):
     return train, test
 
 
+##### BUILDING MODEL ##################################################################################
+
 def built_model(config, device="cuda"):
     if config["model"] == "Model 1":
         model = Model1().to(device)
@@ -156,16 +132,8 @@ def built_model(config, device="cuda"):
 
     return model
 
-def shuffle(loader):
-    p = np.random.permutation(len(loader[0]))
-    train = [loader[0][i] for i in p]
-    test = [loader[1][i] for i in p]
-    return [train, test]
-
-
 def RMSELoss(yhat,y):
     return torch.sqrt(torch.mean((yhat-y)**2))
-
 
 def set_criterion(config):
     if config["criterion"] == "MSE":
@@ -179,13 +147,12 @@ def set_criterion(config):
     
     return criterion
 
-
 def set_optimizer(config, model):
     if config["optimizer"] == "Adam":
         optimizer = torch.optim.Adam(model.parameters(), lr=config["learning_rate"]) # <-- ñe
     
     elif config["optimizer"] == "RMSprop":
-        optimizer = torch.optim.RMSprop(model.parameters(), lr=config["learning_rate"], momentum=0.9) # <-- una mierda tremenda
+        optimizer = torch.optim.RMSprop(model.parameters(), lr=config["learning_rate"], momentum=0.9)
     
     elif config["optimizer"] == "Adadelta":
         optimizer = torch.optim.Adadelta(model.parameters(), lr=config["learning_rate"]) # <-- kk
@@ -198,7 +165,6 @@ def set_optimizer(config, model):
     
     return optimizer
     
-
 def make(config, device = "cuda"):
 
     model = built_model(config)
@@ -209,16 +175,12 @@ def make(config, device = "cuda"):
     return model, train, test, criterion, optimizer#, scheduler
  
 
+##### DATA SAVING #####################################################################################
+
 def save_image(output_AB, output_L, size, path, name = "/img_"):
     output = tqdm(zip(output_AB, output_L, range(len(output_AB))), desc="Saving images")
     for AB, L, i in output:
         save_1_image(AB, L, size, path, name+str(i+1))
-        '''
-        cur = np.zeros((size, size, 3))
-        cur[:,:,0] = np.array(L[0][0,:,:].cpu())
-        cur[:,:,1:] = np.array(128*AB[0].cpu().permute(1,2,0))
-        imsave(path+name+str(i+1)+".png", (lab2rgb(cur)*255).astype(np.uint8))
-        '''
 
 def save_1_image(AB, X, size, path, name):
     cur = np.zeros((size, size, 3))
@@ -229,7 +191,6 @@ def save_1_image(AB, X, size, path, name):
 def save_model(model):
     path = "weights/Weights "+model.get_name()+".pt"
     torch.save(model.state_dict(), path)
-
 
 def import_model(model):
     path = "weights/Weights "+model.get_name()+".pt"
