@@ -37,6 +37,15 @@ import os
 ##### ADJUSTING DATASET ###############################################################################
   
 def crop_center(X,cropx,cropy):
+    """
+    Input: array X --> asymmetric image
+            int cropx --> horizontal dimension limit of the image
+            int cropy --> vertical dimension limit of the image
+
+    Output: array ret --> initial image (array) transformed
+
+    Description: transforms the initial asymmetric image (NumPy array) into a symmetric image (an square image)
+    """
     ret = []
     for img in tqdm(X, desc="Adjusting Images"):
         y = img.shape[0]
@@ -49,13 +58,32 @@ def crop_center(X,cropx,cropy):
     return ret
 
 def shuffle(loader):
+    """
+    Input: list of two NumPy arrays loader --> list of arrays, related to images of the train set (0) and test set (1)
+
+    Output: list of two NumPy arrays [train, test] --> same list of arrays, related to images of the train set (0)
+                                                        and images from the test set (1)
+
+    Description: shuffles the samples from a dataset (loader)
+    """
     p = np.random.permutation(len(loader[0])) # random index list to permutate randomly the loader
     train = [loader[0][i] for i in p]
     test = [loader[1][i] for i in p]
     return [train, test]
 
 def get_data_model(path, split = 0.95, train = True):
+    """
+    Input: string path --> directory where the data (images) is stored
+            double split --> percentage (value between 0 and 1) that indicates the number of images that we will use
+            bool train --> marker that indicates if the data is for training or testing the model
 
+    Output: list of two NumPy arrays [L, AB] --> for each image of the data, we will transform it to two
+                                                        NumPy arrays L and AB. The first is related to the
+                                                        grey original image and the second one to the colored image
+
+    Description: Transform the input image dataset (.jpg) into X,Y data (arrays of grey and colored images) to do
+                    the test and train process of the model
+    """
     # FRAGMENTATION OF THE DATASET
     X = []
     for filename in os.listdir(path):
@@ -71,7 +99,7 @@ def get_data_model(path, split = 0.95, train = True):
 
     # DETERMINING SIZE OF IMAGE
     size = X[0].shape 
-    if size[0] != size[1]: # not simetric image --> ajust image to make it simetric (crop it)
+    if size[0] != size[1]: # not symmetric image --> adjust image to make it symmetric (crop it)
         size = 256
         X = crop_center(X,256,256)
     else: 
@@ -101,6 +129,17 @@ def get_data_model(path, split = 0.95, train = True):
     return [L, AB]
 
 def get_data(config):
+    """
+    Input: dict config --> dictionary that indicates the initial configuration (parameters such as
+                            the name of the model, learning rate, epochs, ...) of the model
+
+    Output: two lists of two NumPy arrays each [Xtrain, Ytrain], [Xtest, Ytest] --> same output as get_data_model, but
+                                                                                    twice (one for training data and
+                                                                                    one for testing data)
+
+    Description: Depending on the input configuration, it gets the adequate transformed Test and Train data
+                    for the model
+    """
     if config["data_set"] == "default": # default mode --> original dataset of each model
         if config["model"] == "Model 1":
             train = get_data_model("data/data_1/", split = 0.5)
@@ -125,6 +164,14 @@ def get_data(config):
 ##### BUILDING MODEL ##################################################################################
 
 def built_model(config, device="cuda"):
+    """
+    Input: dict config --> dictionary that indicates the initial configuration (parameters such as
+                            the name of the model, learning rate, epochs, ...) of the model
+
+    Output: class model --> object of one of the classes created at models.py related to the different models studied
+
+    Description: Initializes the model using cuda according to the "model" value of the initial configuration
+    """
     if config["model"] == "Model 1":
         model = Model1().to(device)
 
@@ -146,6 +193,15 @@ def RMSELoss(yhat,y):
     return torch.sqrt(torch.mean((yhat-y)**2)) 
 
 def set_criterion(config):
+    """
+    Input: dict config --> dictionary that indicates the initial configuration (parameters such as
+                            the name of the model, learning rate, epochs, ...) of the model
+
+    Output: torch.nn class criterion --> object of the torch.nn class related to the model criterion specified
+                                            in the initial configuration
+
+    Description: It defines the criterion of the model depending on the "criterion" value of the configuration
+    """
     if config["criterion"] == "RMSE":
         criterion = RMSELoss
 
@@ -158,6 +214,16 @@ def set_criterion(config):
     return criterion
 
 def set_optimizer(config, model):
+    """
+    Input: dict config --> dictionary that indicates the initial configuration (parameters such as
+                            the name of the model, learning rate, epochs, ...) of the model
+            class model --> object of one of the classes created at models.py related to the different models studied
+
+    Output: torch.optim class optimizer --> object of the torch.optim class related to the model optimizer specified
+                                            in the initial configuration
+
+    Description: It defines the optimizer of the model depending on the "optimizer" value of the configuration
+    """
     if config["optimizer"] == "Adagrad":
         optimizer = torch.optim.Adagrad(model.parameters(), lr=config["learning_rate"])
     
@@ -176,7 +242,23 @@ def set_optimizer(config, model):
     return optimizer
     
 def make(config, device = "cuda"):
+    """
+    Input: dict config --> dictionary that indicates the initial configuration (parameters such as
+                            the name of the model, learning rate, epochs, ...) of the model
 
+    Output: class model --> object of one of the classes created at models.py related to the different models studied
+            list of two NumPy arrays train --> The first array is related to the grey original images of the train
+                                                dataset and the second array to the same colored images
+            list of two NumPy arrays test --> The first array is related to the grey original images of the test
+                                                dataset and the second array to the same colored images
+            torch.nn class criterion --> object of the torch.nn class related to the model criterion specified
+                                            in the initial configuration
+            torch.optim class optimizer --> object of the torch.optim class related to the model optimizer specified
+                                            in the initial configuration
+
+    Description: With the "config" dictionary as a parameter, it calls the adequate functions to initialize the model
+                    and prepare it for training and testing
+    """
     model = built_model(config)
     train, test = get_data(config)
     criterion = set_criterion(config)
@@ -188,25 +270,61 @@ def make(config, device = "cuda"):
 ##### DATA SAVING #####################################################################################
 
 def save_image(output_AB, output_L, size, path, name = "/img_"):
+    """
+    Input: output_AB --> colored image
+            output_L --> grey image
+            int size --> images size
+            str path --> folder where we will save the images
+            str name --> name per defect that will have the images to save
+
+    Description: Calling the "save_1_image" function, saves the images kept in "output_AB"
+                    and "output_L" in the path folder
+    """
     output = tqdm(zip(output_AB, output_L, range(len(output_AB))), desc="Saving images")
     for AB, L, i in output:
         save_1_image(AB, L, size, path, name+str(i+1))
 
 def save_1_image(AB, X, size, path, name):
+    """
+    Input: AB --> colored image
+            X --> grey image
+            int size --> images size
+            str path --> folder where we will save the images
+            str name --> name per defect that will have the images to save
+
+    Description: transforms the initial NumPy arrays (AB, X) into images (.png) and saves them in the path folder
+    """
     cur = np.zeros((size, size, 3)) # create a size x size x 3 (the 3th dimension corresponding to LAB)
     cur[:, :, 0] = np.array(X[0][0, :, :].cpu()) # add the L component 
     cur[:, :, 1:] = np.array(128 * AB[0].cpu().permute(1, 2, 0)) # add the AB dimensions (model output)
     imsave(path + name + ".png", (lab2rgb(cur) * 255).astype(np.uint8)) # saving image in its folder
 
 def save_model(model):
+    """
+    Input: class model --> object of one of the classes created at models.py related to the different models studied
+
+    Description: It saves the model weights on the "weights" folder
+    """
     path = "weights/Weights "+model.get_name()+".pt" # path + file name of the model weights to save
     torch.save(model.state_dict(), path)
 
 def import_model(model):
+    """
+    Input: class model --> object of one of the classes created at models.py related to the different models studied
+
+    Output: class model --> object of one of the classes created at models.py related to the different models studied
+
+    Description: It takes an object of the class
+    """
     path = "weights/Weights "+model.get_name()+".pt" # path + file name of the model weights
     model.load_state_dict(torch.load(path)) # importing trained model
     return model
 
 def delete_files(dir = "image_log"):
+    """
+    Input: string dir --> folder with files that we want to delete
+
+    Description: Deletes all the files in "dir"
+    """
     for f in os.listdir(dir):
         os.remove(os.path.join(dir, f)) # deleting file of the "dir" folder
