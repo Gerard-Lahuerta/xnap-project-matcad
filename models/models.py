@@ -1,5 +1,4 @@
 import torch.nn as nn
-import numpy as np
 import torch
 import torch.nn.functional as F
 
@@ -50,26 +49,20 @@ class Model1(nn.Module):
         )
 
         self.decoder = nn.Sequential(
-            nn.Upsample(scale_factor= 2), #bilinear, nearest, bicubic
-            #nn.MaxUnpool2d(2, stride=1),
+            nn.Upsample(scale_factor= 2),
             nn.ConvTranspose2d(32, 32, (3,3), padding=1, stride = 1),
             nn.ReLU(),
             nn.Upsample(scale_factor= 2),
-            #nn.MaxUnpool2d(2, stride=1),
             nn.ConvTranspose2d(32,16, (3,3), padding=1, stride = 1),
             nn.ReLU(),
             nn.Upsample(scale_factor= 2),
-            #nn.MaxUnpool2d(2, stride=1),
             nn.ConvTranspose2d(16, 2, (3,3), padding=1, stride = 1),
             nn.Tanh()
         )
     
     def forward(self, x):
-        #print(x.shape)
         x = self.encoder(x)
-        #print(x.shape)
         x = self.decoder(x)
-        #print(x.shape)
         return x
     
     def get_name(self):
@@ -168,28 +161,15 @@ class Model3(nn.Module):
     def fusion(self, x):
         input_aux = torch.randn(1,1000, 32, 32).to("cuda")
         fusion_aux = torch.cat((x,input_aux), 1)
-        #print(x.shape)
-        #print(fusion_aux.shape)
         fusion_aux = self.conv_fusion(fusion_aux)
         nn.ReLU()
         return fusion_aux
-        ''''
-        embed_input = self.fusion_repeat(embed_input)
-        embed_input = embed_input.view(embed_input.size(0), 32, 32)
-        embed_input = embed_input.unsqueeze(1)
-        fusion_input = torch.cat((x, embed_input), dim=1)
-        print(fusion_input.shape)
-        return self.fusion_conv(fusion_input)
-        '''
+
 
     def forward(self, x):
-        #embed_input = torch.Tensor(1, 1000).to("cuda") #el 1 és el batch size
         x = self.encoder(x)
-        #print(x.shape)
         x = self.fusion(x)
-        #print(x.shape)
         x = self.decoder(x)
-        #print(x.shape)
         return x
 
     def get_name(self):
@@ -197,7 +177,6 @@ class Model3(nn.Module):
     
 #######################################################################################
 
-from torch.nn.modules.conv import ConvTranspose2d
 class ConvAE(nn.Module):
     def __init__(self):
         super(ConvAE, self).__init__()
