@@ -5,7 +5,7 @@
     @Authors:
             --> Ona Sánchez -- 1601181
             --> Gerard Lahuerta -- 1601350
-            --> Bruno Tejedo Miniéri
+            --> Bruno Tejedo -- 1533327
 
     @Copyright (c) 2023 All Right Reserved
 
