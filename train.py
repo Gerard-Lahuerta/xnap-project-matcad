@@ -24,11 +24,34 @@ import torch
 ###### TRAINING OF THE MODEL ###########################################################################################
 
 def train_log(loss, example_ct, epoch):
+    '''
+    INPUT:
+        --> loss: double
+        --> example_ct: double
+        --> epoch: int
+
+    ABOUT IT:
+        -->
+    '''
     # Where the magic happens
     wandb.log({"epoch": epoch, "Train Loss": loss}, step=example_ct)
 
     
 def train_batch(image, label, model, optimizer, criterion, device="cuda"):
+    '''
+    INPUT:
+        --> image:
+        --> label:
+        --> model: CNN encoder-decoder model (pytorch).
+        --> optimizer: function, used to optimize the model while it is training.
+        --> criterion: function, used to optimize the model while it is training.
+
+    OUTPUT:
+        --> loss: double
+
+    ABOUT IT:
+        -->
+    '''
     images, labels = image.to(device), label.to(device)
 
     # Forward pass ➡
@@ -46,6 +69,23 @@ def train_batch(image, label, model, optimizer, criterion, device="cuda"):
 
 
 def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_loader=True, n_batch=4):
+    '''
+    INPUT:
+        --> loader: list of 2 list (input list and label list respectively).
+        --> model: CNN encoder-decoder model (pytorch).
+        --> optimizer: function, used to optimize the model while it is training.
+        --> criterion: function, used to optimize the model while it is training.
+        --> ct:
+        --> e_info:
+        --> shuffle_loader = True: bool, used to decide if we shuffle the loader or not
+        --> n_batch = 4:
+
+    OUTPUT:
+        --> [ct[0], ct[1]]: list
+
+    ABOUT IT:
+        -->
+    '''
     if shuffle_loader:
         # Shuffling of the images/labels
         loader = shuffle(loader)
@@ -67,6 +107,19 @@ def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_l
 
 
 def train_model(model, loader, criterion, optimizer, config, n_show_image=10):
+    '''
+    INPUT:
+        --> loader: list of 2 list (input list and label list respectively).
+        --> model: CNN encoder-decoder model (pytorch).
+        --> optimizer: function, used to optimize the model while it is training.
+        --> criterion: function, used to optimize the model while it is training.
+        --> config: dict, has to contain the key "epochs".
+            -> config["epochs"]: int, iterations that the model will do.
+        --> n_show_image = 10: int, we show images (and we save them) every this number of epochs
+
+    ABOUT IT:
+        -->
+    '''
     # Watch what the model gets up to: gradients, weights, and more!
     wandb.watch(model, criterion, log="all", log_freq=10)
 

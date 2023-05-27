@@ -25,6 +25,20 @@ from tqdm.auto import tqdm
 ###### TESTING OF THE MODEL ############################################################################################
 
 def test(model, test, criterion, device="cuda"):
+    '''
+    INPUT:
+        --> model: CNN encoder-decoder model (pytorch).
+        --> test: list of 2 list with grey-scale and the AB images (respectively).
+        --> criterion: function, used to optimize the model while it is training.
+
+    OUTPUT:
+        --> output:
+        --> input:
+        --> loss/n:
+
+    ABOUT IT:
+        -->
+    '''
     model.eval()
 
     # Inicialization of parameters
@@ -52,6 +66,16 @@ def test(model, test, criterion, device="cuda"):
     return output, input, loss/n
 
 def test_model(model, test_loader, criterion, save: bool = True):
+    '''
+    INPUT:
+        --> model: CNN encoder-decoder model (pytorch).
+        --> test_loader: list of 2 list (input test list and label test list respectively)
+        --> criterion: function, used to optimize the model while it is training.
+        --> save = True: bool, marker to decide if we save (or not) the resulting images.
+
+    ABOUT IT:
+        -->
+    '''
     # Set model in evaluation mode
     model.eval()
     size = test_loader[0][0].shape[2]

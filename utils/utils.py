@@ -49,9 +49,9 @@ def crop_center(X,cropx,cropy):
     ABOUT IT:
         --> Crop the center of a list (X) of images into an image of dimensions cropx x cropy.
 
-    RELLEVANT INFORMATION:
+    RELEVANT INFORMATION:
         --> If some image in the list has less dimension (in one axis) than the needed to the crop
-            it will be ignored (not croped) and not be included in the returned list of images.
+            it will be ignored (not cropped) and not be included in the returned list of images.
     '''
 
     ret = []
@@ -75,7 +75,7 @@ def shuffle(loader):
         --> ret: list of 2 list (input list and label list respectively).
 
     ABOUT IT:
-        --> Shuffle randomly the input list and the label list but in the same way (mantaining the 
+        --> Shuffle randomly the input list and the label list but in the same way (maintaining the
             input and the label in the same index after shuffling).
     '''
 
@@ -101,9 +101,9 @@ def get_data_model(path, split = 0.95, train = True):
             percentage of them in gray-scale version (first position of the array returned) and the
             AB version (second position of the array returned).
 
-    RELLEVANT INFORMATION:
+    RELEVANT INFORMATION:
         --> If the shape of the images in the folder indicated by the "path" parameter variable
-            are not simetric, the function will call to the "crop_center" function explained above to 
+            are not symmetric, the function will call to the "crop_center" function explained above to
             crop the image into a 256 x 256 image.
         --> If train = True selects the first split*"number of images in the directory" images.
         --> If train = False selects the last split*"number of images in the directory" images.
@@ -159,8 +159,8 @@ def get_data(config):
     INPUT:
         --> config: dict, has to contain the keys "dat_set" and (depending) "train" or "split".
             -> config["data_set"]: string with the word "default" or the path to the dataset (images).
-            -> config["model"]: string, (usefull if "default") generates the dataset of the model.
-            -> config["split]: float, (usefull if not "default") determines the percentage the data to
+            -> config["model"]: string, (useful if "default") generates the dataset of the model.
+            -> config["split]: float, (useful if not "default") determines the percentage the data to
                                return in train list contained in the folder selected by the path.
 
     OUTPUT:
@@ -171,9 +171,9 @@ def get_data(config):
         --> If mode "default": returns the default dataset of each model to train and test.
         --> If mode "path": returns the dataset selected in the path to train and test.
 
-    RELLEVANT INFORMATION:
-        --> If a path directory is pased in the parameter "path" it will return a test train with a
-            0.01 percent of all the dataset includen in it.
+    RELEVANT INFORMATION:
+        --> If a path directory is given in the parameter "path" it will return a test train with a
+            0.01 percent of all the dataset included in it.
         --> If while selecting "default" mode the config dictionary with the key "model" not contains
             a correct model, it will return (by default) the dataset of model 3. 
     '''
@@ -190,7 +190,7 @@ def get_data(config):
 
         else: # Model 3
             train = get_data_model("data/data_2/Train/", split = 1)
-            test = get_data_model("data/data_2/Train/", split = 1)
+            test = get_data_model("data/data_2/Test/", split = 1)
 
     else: # selecction custom dataset and train split
         train = get_data_model(config["data_set"], split = config["split"])
@@ -205,16 +205,16 @@ def built_model(config, device="cuda"):
     '''
     INPUT:
         --> config: dict, has to contain the key "model".
-            -> config["model"]: string, name of the model to inicializate.
+            -> config["model"]: string, name of the model to initialize.
 
     OUTPUT:
-        --> model: CNN encode-deconder model (pytorch).
+        --> model: CNN encoder-decoder model (pytorch).
 
     ABOUT IT:
-        --> Inicialice the model selected by the dictionary "config" using the key "model".
+        --> Initialize the model selected by the dictionary "config" using the key "model".
 
-    RELLEVANT INFORMATION:
-        --> By default and if the model selected is not in the ones we distribute in this proyect, the
+    RELEVANT INFORMATION:
+        --> By default and if the model selected is not in the ones we distribute in this project, the
             function will return the model ColorizationNet.
     '''
 
@@ -246,7 +246,7 @@ def RMSELoss(yhat,y):
         --> ret: float, loss of the model.
     
     ABOUT IT:
-        --> RMSE function loss programed to be used as a criterion in the trainig of the model.
+        --> RMSE function loss programed to be used as a criterion in the training of the model.
     '''
 
     return torch.sqrt(torch.mean((yhat-y)**2)) 
@@ -256,16 +256,16 @@ def set_criterion(config):
     '''
     INPUT:
         --> config: dict, has to contain the key "criterion".
-            -> config["criterion"]: string, type of function to modelate the loss of the model.
+            -> config["criterion"]: string, type of function to model the loss of the model.
 
     OUTPUT:
-        --> criterion: function, used to optimice the model while is training.
+        --> criterion: function, used to optimize the model while it is training.
 
     ABOUT IT:
         --> Selects the loss function to train the model.
 
-    RELLEVANT INFORMATION:
-        --> By default and if the criterion selected is not in the ones we distribute in this proyect, the
+    RELEVANT INFORMATION:
+        --> By default and if the criterion selected is not in the ones we distribute in this project, the
             function will return the criterion MSE.
     '''
 
@@ -285,18 +285,18 @@ def set_optimizer(config, model):
     '''
     INPUT:
         --> config: dict, has to contain the key "optimizer" and "learning_rate.
-            -> config["optimizer"]: string, type of function to modelate the loss of the model.
+            -> config["optimizer"]: string, type of function to model the loss of the model.
             -> config["learning_rate"]: float, learning rate of the optimizer.
         --> model: CNN encoder-decoder model (pytorch).
 
     OUTPUT:
-        --> optimizer: function, used to optimice the model while is training.
+        --> optimizer: function, used to optimize the model while it is training.
 
     ABOUT IT:
         --> Selects the optimizer function to train the model.
 
-    RELLEVANT INFORMATION:
-        --> By default and if the optimizer selected is not in the ones we distribute in this proyect, the
+    RELEVANT INFORMATION:
+        --> By default and if the optimizer selected is not in the ones we distribute in this project, the
             function will return the optimizer Adam.
     '''
 
@@ -323,22 +323,22 @@ def make(config, device = "cuda"):
     INPUT:
         --> config: dict, has to contain the keys "model", "data_set", "split", "criterion", 
                     "optimizer" and "learning_rate".
-            -> config["model"]: config["model"]: string, name of the model to inicializate.
+            -> config["model"]: config["model"]: string, name of the model to initialize.
             -> config["data_set"]: string with the word "default" or the path to the dataset (images).
             -> config["split"]: float, determines the percentage of the data (not default) returned.
-            -> config["criterion"]: string, type of function to modelate the loss of the model.
-            -> config["optimizer"]: string, type of function to modelate the loss of the model.
+            -> config["criterion"]: string, type of function to model the loss of the model.
+            -> config["optimizer"]: string, type of function to model the loss of the model.
             -> config["learning_rate"]: float, learning rate of the optimizer.
 
     OUTPUT:
-        --> model: model: CNN encode-deconder model (pytorch).
+        --> model: model: CNN encoder-decoder model (pytorch).
         --> train: list of 2 list with grey-scale and the AB images (respectively).
         --> test: list of 2 list with grey-scale and the AB images (respectively).
-        --> criterion: function, used to optimice the model while is training.
-        --> optimizer: function, used to optimice the model while is training.
+        --> criterion: function, used to optimize the model while it is training.
+        --> optimizer: function, used to optimize the model while it is training.
 
     ABOUT IT:
-        --> Builts de model estructure, dataset and the functions needed to train/test the model
+        --> Builds the model structure, dataset and the functions needed to train/test the model
             (criterion and optimizer).
     '''
 

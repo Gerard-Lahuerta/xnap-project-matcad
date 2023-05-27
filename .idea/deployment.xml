@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="xnmaster@ml-lab-f16b9785-93b3-4cf9-952d-b7314da22250.westeurope.cloudapp.azure.com:49507 password (8)" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="xnmaster@ml-lab-f16b9785-93b3-4cf9-952d-b7314da22250.westeurope.cloudapp.azure.com:49507 password (9)" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
       <paths name="xnmaster@ml-lab-f16b9785-93b3-4cf9-952d-b7314da22250.westeurope.cloudapp.azure.com:49507 password">
         <serverdata>
@@ -52,6 +52,13 @@
         </serverdata>
       </paths>
       <paths name="xnmaster@ml-lab-f16b9785-93b3-4cf9-952d-b7314da22250.westeurope.cloudapp.azure.com:49507 password (8)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/xnmaster/projecte" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="xnmaster@ml-lab-f16b9785-93b3-4cf9-952d-b7314da22250.westeurope.cloudapp.azure.com:49507 password (9)">
         <serverdata>
           <mappings>
             <mapping deploy="/home/xnmaster/projecte" local="$PROJECT_DIR$" />
