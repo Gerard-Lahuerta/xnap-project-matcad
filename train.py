@@ -23,7 +23,7 @@ import torch
 
 ###### TRAINING OF THE MODEL ###########################################################################################
 
-def train_log(loss, example_ct, epoch):
+def train_log(loss, example_ct, epoch, opt):
     '''
     INPUT:
         --> loss: torch.Tensor, has to contain the loss of the model. 
@@ -37,7 +37,7 @@ def train_log(loss, example_ct, epoch):
         --> Generates a register in W&B (weights and Bias).
     '''
     # Where the magic happens
-    wandb.log({"epoch": epoch, "Train Loss": loss}, step=example_ct)
+    wandb.log({"epoch": epoch, "Train Loss": loss, "lr": opt}, step=example_ct)
 
     
 def train_batch(image, label, model, optimizer, criterion, device="cuda"):
@@ -116,7 +116,7 @@ def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_l
         # Report metrics every 25th batch
         if ((ct[0] + 1) % 25) == 0:
             e_info[1].set_postfix({'Loss': f"{loss:.6f}"})
-            train_log(loss, e_info[0], e_info[0])
+            train_log(loss, e_info[0], e_info[0], optimizer.param_groups[0]['lr'])
 
     return [ct[0], ct[1]]
 
@@ -175,5 +175,5 @@ def train_model(model, loader, criterion, optimizer, config, n_show_image=10):
                 save_1_image(AB, L, size, "image_log", "/img_" + str(epoch))
 
         # Actualization of the leraning_rate
-        if epoch % 500 == 0:
+        if epoch % 500 == 0 and epoch != 0:
             optimizer.param_groups[0]['lr'] = optimizer.param_groups[0]['lr']/10

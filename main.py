@@ -53,14 +53,14 @@ if __name__ == "__main__":
     config = dict(
         # model informatin
         model = "Model 1",
-        save_weights = False,
+        save_weights = True,
         import_weights = False,
         save_images = True,
         train = True,
         test = True,
         
         # training information
-        epochs = 3000,
+        epochs = 600,
         learning_rate = 0.0001,
         optimizer = "Adam",
         criterion = "MSE",
