@@ -177,4 +177,3 @@ def train_model(model, loader, criterion, optimizer, config, n_show_image=10):
         # Actualization of the leraning_rate
         if epoch % 500 == 0:
             optimizer.param_groups[0]['lr'] = optimizer.param_groups[0]['lr']/10
-            print(optimizer.param_groups[0]['lr'])
