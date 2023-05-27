@@ -173,3 +173,8 @@ def train_model(model, loader, criterion, optimizer, config, n_show_image=10):
                 AB = model(L)
                 size = L.shape[2]
                 save_1_image(AB, L, size, "image_log", "/img_" + str(epoch))
+
+        # Actualization of the leraning_rate
+        if epoch % 500 == 0:
+            optimizer.param_groups[0]['lr'] = optimizer.param_groups[0]['lr']/10
+            print(optimizer.param_groups[0]['lr'])
