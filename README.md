@@ -48,17 +48,31 @@ CONFIRMAS SI SE HA PROBADO CON EL CAPTIONING!!!!!!!!!!!!
 AÑADIR CONCLUSIONES Y COSIÑAS
 
 COMENTAR DEL ENCODER DECODER
+
 ## Model 2
-The network in the beta version is very similar to the alpha version. The difference is that it was designed to use more than one image to train the network.
+Also knows as the beta version, the model is based in the alpha version. It has a similar convolution network but has a differed purpose. 
+It is designed to use more than one image to train the network (avoid memorization and starting to have a model able to learn).
+Nevertheless, and despite of his bigger network respect its precessor, does not obtain quite good results colorizing a whole group of images.
 
 After testing the model with various datasets, from the one offered in the starting point with 8 images to our own dataset consisting of more than 2000 images of dogs, it has been observed that the beta version is only capable of giving the pictures grayish and brown tones.
 
-EXPLICAR PORQUE CREEMOS QUE PASA ESO.
+This behavior is not compleatly understood but the register while training given makes us conclude the following statments:
 
-EXPLICAR EL ENCODER DECODER.
+- 
+-
+-
 
-PONER FOTICOS.
+However, this conclusions may be wrong and this behavior (that has in a similar way the alpha version in the eraliest epochs of the trainig process) could be explained by not having enough epochs to train.
+
+Although the statements obteined in the register while trainig or the hypothesis of not having enough epochs, the new model (model 3) gives a new possibility branch to give better performance and in the early testing show quite better results.
+
+Moreover, trying to obtain more conclusions on what makes de beta version give that bad results, the alpha version was tested with the beta dataset (to compare results because this version was not thought to train with more than one image) and gave significant better results (but with a huge amount of epochs respect the training done with the dataset it was testet initialy).
+
+Gotta point out that this last behaviour (that the alpha verions obtained better results than it successor, the beta version), is a relevant evidence of the hypothesis explained that the beta version does not train with enough epochs. But with the right amount of time it would need to determine this possibility or to obtain better results; the option of dismiss this model and take to the model 3 became our decision.
+
 ## Model 3
+
+
 ## Other autoencoders
 In the file models.py, we have also included two extra models, named `ConvAE`and `ColorizationNet`.
 
