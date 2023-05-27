@@ -24,6 +24,28 @@ import torchvision.models as models
 ###### MODELS FROM STARTING POINT ######################################################################################
 
 class Model1(nn.Module):
+    '''
+    INFORMATION:
+        --> CNN encoder-decoder model, uses simple convolutions to encoder and decoder the input image.
+            It is thought to be used with a grey-scale input image and to return the AB-scale image to
+            reconstruct (with the input image) an image in LAB format.
+
+    FUNCTIONS:
+        --> __init__(), inicialitzates the model.
+        --> forward(), generates the output (used in backprogation and testing process)
+        --> get_name(), returns the name of the model (used to know were to save the model's results)
+
+    USES:
+        --> Used to generate colorized images in many datasets like the ones in the folders data_1,
+            Captioning or PERROS.
+    
+    RECOMENDATIONS:
+        --> Train the model with 200 epochs.
+        --> Train the model with learning rate of 0.001.
+        --> Train the model with MSE criterion.
+        --> Train the model with Adam optimizer.
+    '''
+
     def __init__(self):
         super(Model1, self).__init__()
 
@@ -68,6 +90,29 @@ class Model1(nn.Module):
 
 
 class Model2(nn.Module):
+    '''
+    INFORMATION:
+        --> CNN encoder-decoder model, uses more complex convolutions to encoder and decoder the input image.
+            It is thought to be used with a grey-scale input image and to return the AB-scale image to
+            reconstruct (with the input image) an image in LAB format.
+
+    FUNCTIONS:
+        --> __init__(), inicialitzates the model.
+        --> forward(), generates the output (used in backprogation and testing process)
+        --> get_name(), returns the name of the model (used to know were to save the model's results)
+
+    USES:
+        --> Used to generate colorized images in many datasets like the ones in the folders data_2
+            or PERROS.
+    
+    RECOMENDATIONS:
+        --> Train the model with 1000 epochs.
+        --> Train the model with learning rate of 0.001.
+        --> Train the model with MSE criterion.
+        --> Train the model with Adam optimizer.
+    '''
+
+     
     def __init__(self):
         super(Model2, self).__init__()
         
@@ -117,6 +162,29 @@ class Model2(nn.Module):
 
 
 class Model3(nn.Module):
+    '''
+    INFORMATION:
+        --> CNN encoder-decoder model, uses complex convolutions to encoder and decoder the input image.
+            It is thought to be used with a grey-scale input image and to return the AB-scale image to
+            reconstruct (with the input image) an image in LAB format.
+
+    FUNCTIONS:
+        --> __init__(), inicialitzates the model.
+        --> forward(), generates the output (used in backprogation and testing process)
+        --> fusion(), add little noise to the encoder result (avoid overfitting, add "rugosity" to the image geenrated)
+        --> get_name(), returns the name of the model (used to know were to save the model's results)
+
+    USES:
+        --> Used to generate colorized images in many datasets like the ones in the folders data_2,
+            Captioning or PERROS.
+    
+    RECOMENDATIONS:
+        --> Train the model with 250 epochs.
+        --> Train the model with learning rate of 0.0001.
+        --> Train the model with MSE criterion.
+        --> Train the model with Adam optimizer.
+    '''
+    
     def __init__(self):
         super(Model3, self).__init__()
         
@@ -180,6 +248,17 @@ class Model3(nn.Module):
 ###### OTHER AUTOENCODERS ##############################################################################################
 
 class ConvAE(nn.Module):
+    '''
+    INFORMATION:
+        -->
+
+    FUNCTINOS:
+        -->
+
+    USES / RECOMENDATIONS:
+        -->
+    '''
+
     def __init__(self):
         super(ConvAE, self).__init__()
 
@@ -214,6 +293,17 @@ class ConvAE(nn.Module):
 
 
 class ColorizationNet(nn.Module):
+    '''
+    INFORMATION:
+        -->
+
+    FUNCTINOS:
+        -->
+
+    USES / RECOMENDATIONS:
+        -->
+    '''
+
     def __init__(self, input_size=128):
         super(ColorizationNet, self).__init__()
 
