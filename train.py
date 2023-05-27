@@ -132,8 +132,17 @@ def train_model(model, loader, criterion, optimizer, config, n_show_image=10):
             -> config["epochs"]: int, epochs of the training process of the model.
         --> n_show_image = 10: int, number of epochs to log one test image; show the training proces.
 
+    OUTPUT:
+        --> None.
+
     ABOUT IT:
-        -->
+        --> Trains the model with the number of epochs indicates in config["epochs"], delets the 
+            previos register log don it and save the new one in the folde "image_log/". 
+        --> Registrates the information of the model using W&B (Weights and Bias). 
+
+    RELEVANT INFORMATION:
+        --> By default, n_show_images is set to 10 to obtain a good register of the training proces.
+        --> If the epochs to train the model are less than n_show_image it will not make any register.
     '''
     
     # Watch what the model gets up to: gradients, weights, and more!
