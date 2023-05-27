@@ -1,0 +1,64 @@
+wandb_version: 1
+
+model:
+  desc: null
+  value: Model 1
+save_weights:
+  desc: null
+  value: false
+import_weights:
+  desc: null
+  value: true
+save_images:
+  desc: null
+  value: true
+train:
+  desc: null
+  value: false
+test:
+  desc: null
+  value: true
+epochs:
+  desc: null
+  value: 200
+learning_rate:
+  desc: null
+  value: 0.001
+optimizer:
+  desc: null
+  value: Adam
+criterion:
+  desc: null
+  value: MSE
+data_set:
+  desc: null
+  value: data/PERROS/
+split:
+  desc: null
+  value: 0.75
+_wandb:
+  desc: null
+  value:
+    python_version: 3.8.16
+    cli_version: 0.15.2
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1685199085.122603
+    t:
+      1:
+      - 1
+      - 41
+      - 55
+      2:
+      - 1
+      - 41
+      - 55
+      3:
+      - 2
+      - 16
+      - 23
+      4: 3.8.16
+      5: 0.15.2
+      8:
+      - 5
