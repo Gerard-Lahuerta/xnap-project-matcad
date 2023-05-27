@@ -1,0 +1,77 @@
+{
+    "os": "Linux-5.10.0-kali9-amd64-x86_64-with-glibc2.10",
+    "python": "3.8.8",
+    "heartbeatAt": "2023-05-27T08:35:39.371103",
+    "startedAt": "2023-05-27T08:35:38.528232",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/gerard/XARXES NEURALS/PROJECT-GOOD/xnap-project-matcad_grup_6/main.py",
+    "codePath": "main.py",
+    "git": {
+        "remote": "https://github.com/DCC-UAB/xnap-project-matcad_grup_6.git",
+        "commit": "d6e3f9757769ef53d0dede3808a79b1c31440a0f"
+    },
+    "email": "gerard.lahuerta.martin@gmail.com",
+    "root": "/home/gerard/XARXES NEURALS/PROJECT-GOOD/xnap-project-matcad_grup_6",
+    "host": "kali",
+    "username": "gerard",
+    "executable": "/home/gerard/anaconda3/bin/python",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 693.1473750000001,
+        "min": 400.0,
+        "max": 3725.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 711.861,
+            "min": 400.0,
+            "max": 1800.0
+        },
+        {
+            "current": 746.726,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 610.772,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 686.66,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 700.082,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 673.144,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 680.427,
+            "min": 400.0,
+            "max": 4000.0
+        },
+        {
+            "current": 644.609,
+            "min": 400.0,
+            "max": 4000.0
+        }
+    ],
+    "disk": {
+        "total": 914.3848724365234,
+        "used": 188.72209930419922
+    },
+    "memory": {
+        "total": 7.557899475097656
+    }
+}

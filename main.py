@@ -51,8 +51,8 @@ if __name__ == "__main__":
 
     # Configuration of the image colorization
     config = dict(
-        model = "Model 3",
-        epochs = 1000,
+        model = "Model 1",
+        epochs = 10,
 
         learning_rate = 0.0001,
         optimizer = "Adam",

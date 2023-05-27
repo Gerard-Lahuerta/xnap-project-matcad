@@ -26,7 +26,7 @@ import torch
 def train_log(loss, example_ct, epoch):
     '''
     INPUT:
-        --> loss: double
+        --> loss: float, 
         --> example_ct: double
         --> epoch: int
 
@@ -57,6 +57,8 @@ def train_batch(image, label, model, optimizer, criterion, device="cuda"):
     # Forward pass ➡
     outputs = model(images)
     loss = criterion(outputs, labels)
+    print(type(loss))
+    exit()
 
     # Backward pass ⬅
     optimizer.zero_grad()
