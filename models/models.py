@@ -32,8 +32,8 @@ class Model1(nn.Module):
 
     FUNCTIONS:
         --> __init__(), inicialitzates the model.
-        --> forward(), generates the output (used in backprogation and testing process)
-        --> get_name(), returns the name of the model (used to know were to save the model's results)
+        --> forward(), generates the output (used in backprogation and testing process).
+        --> get_name(), returns the name of the model (used to know were to save the model's results).
 
     USES:
         --> Used to generate colorized images in many datasets like the ones in the folders data_1,
@@ -98,8 +98,8 @@ class Model2(nn.Module):
 
     FUNCTIONS:
         --> __init__(), inicialitzates the model.
-        --> forward(), generates the output (used in backprogation and testing process)
-        --> get_name(), returns the name of the model (used to know were to save the model's results)
+        --> forward(), generates the output (used in backprogation and testing process).
+        --> get_name(), returns the name of the model (used to know were to save the model's results).
 
     USES:
         --> Used to generate colorized images in many datasets like the ones in the folders data_2
@@ -170,9 +170,9 @@ class Model3(nn.Module):
 
     FUNCTIONS:
         --> __init__(), inicialitzates the model.
-        --> forward(), generates the output (used in backprogation and testing process)
+        --> forward(), generates the output (used in backprogation and testing process).
         --> fusion(), add little noise to the encoder result (avoid overfitting, add "rugosity" to the image geenrated)
-        --> get_name(), returns the name of the model (used to know were to save the model's results)
+        --> get_name(), returns the name of the model (used to know were to save the model's results).
 
     USES:
         --> Used to generate colorized images in many datasets like the ones in the folders data_2,
@@ -250,13 +250,23 @@ class Model3(nn.Module):
 class ConvAE(nn.Module):
     '''
     INFORMATION:
-        -->
+        --> CNN encoder-decoder model, uses very simple convolutions to encoder and decoder the input image.
+            It is thought to be used with a grey-scale input image and to return the AB-scale image to
+            reconstruct (with the input image) an image in LAB format.
 
-    FUNCTINOS:
-        -->
+    FUNCTIONS:
+        --> __init__(), inicialitzates the model.
+        --> forward(), generates the output (used in backprogation and testing process).
+        --> get_name(), returns the name of the model (used to know were to save the model's results).
 
-    USES / RECOMENDATIONS:
-        -->
+    USES:
+        --> Used to generate colorized images in all datasets to debug and compare our models.
+    
+    RECOMENDATIONS:
+        --> Train the model with 100 epochs.
+        --> Train the model with learning rate of 0.01.
+        --> Train the model with MSE criterion.
+        --> Train the model with Adam optimizer.
     '''
 
     def __init__(self):
@@ -295,14 +305,25 @@ class ConvAE(nn.Module):
 class ColorizationNet(nn.Module):
     '''
     INFORMATION:
-        -->
+        --> CNN encoder-decoder model, complex convolutions to encoder and decoder the input image.
+            It is thought to be used with a grey-scale input image and to return the AB-scale image to
+            reconstruct (with the input image) an image in LAB format.
 
-    FUNCTINOS:
-        -->
+    FUNCTIONS:
+        --> __init__(), inicialitzates the model.
+        --> forward(), generates the output (used in backprogation and testing process).
+        --> get_name(), returns the name of the model (used to know were to save the model's results).
 
-    USES / RECOMENDATIONS:
-        -->
+    USES:
+        --> Used to generate colorized images in all datasets to debug and compare our models.
+    
+    RECOMENDATIONS:
+        --> Train the model with 100 epochs.
+        --> Train the model with learning rate of 0.001.
+        --> Train the model with MSE criterion.
+        --> Train the model with Adam optimizer.
     '''
+
 
     def __init__(self, input_size=128):
         super(ColorizationNet, self).__init__()
