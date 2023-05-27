@@ -26,12 +26,15 @@ import torch
 def train_log(loss, example_ct, epoch):
     '''
     INPUT:
-        --> loss: float, 
-        --> example_ct: double
-        --> epoch: int
+        --> loss: torch.Tensor, has to contain the loss of the model. 
+        --> example_ct: float, number of images that the model has used to train.
+        --> epoch: int, actual epoch of the trainning proces of the model.
+
+    OUTPUT:
+        --> None.
 
     ABOUT IT:
-        -->
+        --> Generates a register in W&B (weights and Bias).
     '''
     # Where the magic happens
     wandb.log({"epoch": epoch, "Train Loss": loss}, step=example_ct)
@@ -40,25 +43,30 @@ def train_log(loss, example_ct, epoch):
 def train_batch(image, label, model, optimizer, criterion, device="cuda"):
     '''
     INPUT:
-        --> image:
-        --> label:
+        --> image: torch.Tensor, matrix of dimensions 1 x 1 x size x size to train the model
+        --> label: torch.Tensor, matrix of dimensions 1 x 2 x size x size to compare the model output.
         --> model: CNN encoder-decoder model (pytorch).
-        --> optimizer: function, used to optimize the model while it is training.
-        --> criterion: function, used to optimize the model while it is training.
+        --> optimizer: function, used to optimize the model weights.
+        --> criterion: function, used to obtain the loss of the model and optimize its weights.
+        --> device = "cuda": string, device where the training process is done.
 
     OUTPUT:
-        --> loss: double
+        --> loss: torch.Tensor, contains the loss and the backpropagation information of the model.
 
     ABOUT IT:
-        -->
+        --> Pass the image and label tensor into  the "device", obtains the output of the model (using
+            the "image" as the input), compares the output and the label (obtainig the loss) and 
+            optimize the model using backpropagation.
+
+    RELEVANT INFORMATION:
+        --> By default, device is set to "cuda" to distribute the training proces into the GPU.
     '''
+
     images, labels = image.to(device), label.to(device)
 
     # Forward pass ➡
     outputs = model(images)
     loss = criterion(outputs, labels)
-    print(type(loss))
-    exit()
 
     # Backward pass ⬅
     optimizer.zero_grad()
@@ -70,24 +78,29 @@ def train_batch(image, label, model, optimizer, criterion, device="cuda"):
     return loss
 
 
-def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_loader=True, n_batch=4):
+def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_loader=True):
     '''
     INPUT:
-        --> loader: list of 2 list (input list and label list respectively).
+        --> loader: list, images in grey-scale (input) and images in AB-scale (label) respectively.
         --> model: CNN encoder-decoder model (pytorch).
-        --> optimizer: function, used to optimize the model while it is training.
-        --> criterion: function, used to optimize the model while it is training.
-        --> ct:
-        --> e_info:
-        --> shuffle_loader = True: bool, used to decide if we shuffle the loader or not
-        --> n_batch = 4:
+        --> optimizer: function, used to optimize the model weights.
+        --> criterion: function, used to obtain the loss of the model and optimize its weights.
+        --> ct: list, contains the total batch and the total of images used to train (respectively).
+        --> e_info: list, contains information of epochs: trainig epoch and tqdm-for (respectively).
+        --> shuffle_loader = True: bool, used to decide if we shuffle the loader or not.
 
     OUTPUT:
-        --> [ct[0], ct[1]]: list
+        --> ret: list, retuns the actualizated ct list passed by parameter.
 
     ABOUT IT:
-        -->
+        --> Uses every image passed in the loader to train the model, it prints and logs (using W&B)
+            the informatino of the training every 25 batches (showing the loss of the model in one,
+            unknown, image.
+
+    RELEVANT INFORMATION:
+        -->By default "shuffle_loader" is set to True to avoid overfitting / memorization of the model.
     '''
+
     if shuffle_loader:
         # Shuffling of the images/labels
         loader = shuffle(loader)
@@ -96,7 +109,7 @@ def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_l
         # Training of each batch
         loss = train_batch(images, labels, model, optimizer, criterion)
         # Image counter
-        ct[1] += len(images)
+        ct[1] += 1
         # Batch counter
         ct[0] += 1
 
@@ -111,17 +124,18 @@ def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_l
 def train_model(model, loader, criterion, optimizer, config, n_show_image=10):
     '''
     INPUT:
-        --> loader: list of 2 list (input list and label list respectively).
+        --> loader: list, images in grey-scale (input) and images in AB-scale (label) respectively.
         --> model: CNN encoder-decoder model (pytorch).
-        --> optimizer: function, used to optimize the model while it is training.
-        --> criterion: function, used to optimize the model while it is training.
+        --> optimizer: function, used to optimize the model weights.
+        --> criterion: function, used to obtain the loss of the model and optimize its weights.
         --> config: dict, has to contain the key "epochs".
-            -> config["epochs"]: int, iterations that the model will do.
-        --> n_show_image = 10: int, we show images (and we save them) every this number of epochs
+            -> config["epochs"]: int, epochs of the training process of the model.
+        --> n_show_image = 10: int, number of epochs to log one test image; show the training proces.
 
     ABOUT IT:
         -->
     '''
+    
     # Watch what the model gets up to: gradients, weights, and more!
     wandb.watch(model, criterion, log="all", log_freq=10)
 
