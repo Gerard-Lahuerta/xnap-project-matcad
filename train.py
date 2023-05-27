@@ -28,7 +28,7 @@ def train_log(loss, example_ct, epoch):
     INPUT:
         --> loss: torch.Tensor, has to contain the loss of the model. 
         --> example_ct: float, number of images that the model has used to train.
-        --> epoch: int, actual epoch of the trainning proces of the model.
+        --> epoch: int, actual epoch of the training proces of the model.
 
     OUTPUT:
         --> None.
@@ -94,7 +94,7 @@ def train_batch_model(loader, model, optimizer, criterion, ct, e_info, shuffle_l
 
     ABOUT IT:
         --> Uses every image passed in the loader to train the model, it prints and logs (using W&B)
-            the informatino of the training every 25 batches (showing the loss of the model in one,
+            the information of the training every 25 batches (showing the loss of the model in one,
             unknown, image.
 
     RELEVANT INFORMATION:

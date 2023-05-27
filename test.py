@@ -79,7 +79,7 @@ def test_model(model, test_loader, criterion, save: bool = True):
         --> model: CNN encoder-decoder model (pytorch).
         --> test_loader: list, images in L-scale (input) and images in AB-scale (label) respectively.
         --> criterion: function, used to obtain the loss (error) of the model.
-        --> save = True: bool, decide if the images are going to be save in the model's results folder.
+        --> save = True: bool, decide if the images are going to be saved in the model's results folder.
 
     OUTPUT:
         --> None.
@@ -87,7 +87,7 @@ def test_model(model, test_loader, criterion, save: bool = True):
     ABOUT IT:
         --> Tests the model with all the images contained in the "test_loader" parameter, register the
             loss using W&B (Weights and Bias) and save (if desired) the whole output of the testing 
-            proces into the espefici model's results folder.
+            proces into the specific model's results folder.
 
     RELEVANT INFORMATION:
         --> By default, save is set to "True" to register the colorized images generates by the model.

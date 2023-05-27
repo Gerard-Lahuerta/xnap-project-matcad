@@ -31,8 +31,8 @@ class Model1(nn.Module):
             reconstruct (with the input image) an image in LAB format.
 
     FUNCTIONS:
-        --> __init__(), inicialitzates the model.
-        --> forward(), generates the output (used in backprogation and testing process).
+        --> __init__(), initializes the model.
+        --> forward(), generates the output (used in backpropagation and testing process).
         --> get_name(), returns the name of the model (used to know were to save the model's results).
 
     USES:
@@ -97,8 +97,8 @@ class Model2(nn.Module):
             reconstruct (with the input image) an image in LAB format.
 
     FUNCTIONS:
-        --> __init__(), inicialitzates the model.
-        --> forward(), generates the output (used in backprogation and testing process).
+        --> __init__(), initializes the model.
+        --> forward(), generates the output (used in backpropagation and testing process).
         --> get_name(), returns the name of the model (used to know were to save the model's results).
 
     USES:
@@ -169,9 +169,9 @@ class Model3(nn.Module):
             reconstruct (with the input image) an image in LAB format.
 
     FUNCTIONS:
-        --> __init__(), inicialitzates the model.
-        --> forward(), generates the output (used in backprogation and testing process).
-        --> fusion(), add little noise to the encoder result (avoid overfitting, add "rugosity" to the image geenrated)
+        --> __init__(), initializes the model.
+        --> forward(), generates the output (used in backpropagation and testing process).
+        --> fusion(), add little noise to the encoder result (avoid overfitting, add "rugosity" to the image generated)
         --> get_name(), returns the name of the model (used to know were to save the model's results).
 
     USES:
@@ -255,8 +255,8 @@ class ConvAE(nn.Module):
             reconstruct (with the input image) an image in LAB format.
 
     FUNCTIONS:
-        --> __init__(), inicialitzates the model.
-        --> forward(), generates the output (used in backprogation and testing process).
+        --> __init__(), initializes the model.
+        --> forward(), generates the output (used in backpropagation and testing process).
         --> get_name(), returns the name of the model (used to know were to save the model's results).
 
     USES:
