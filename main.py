@@ -51,22 +51,23 @@ if __name__ == "__main__":
 
     # Configuration of the image colorization
     config = dict(
+        # model informatin
         model = "Model 1",
+        save_weights = True,
+        import_weights = False,
+        save_images = True,
+        train = True,
+        test = True,
+        
+        # training information
         epochs = 10,
-
         learning_rate = 0.0001,
         optimizer = "Adam",
         criterion = "MSE",
 
-        data_set = "default", # "data/data_2/Train/", data/PERROS/", "data/Captioning/"
-        split = 0.25,
-
-        save_weights = True,
-        import_weights = False,
-        save_images = True,
-
-        train = True,
-        test = True
+        # dataset information
+        data_set = "default", # "default", "data/data_2/Train/", "data/PERROS/", "data/Captioning/"
+        split = 0.25
         )
 
     # Init wandb for tracking the evolution
