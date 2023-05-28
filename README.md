@@ -57,7 +57,26 @@ This efect (augment the epochs proportionaly to the number of images used to tra
 However, if the target to colorize is similar to the images learned in training, the model can  provide quite good results with less images and a significant amount of epochs.
 
 To sum up, this model, despite being the early prototipe and having some limitations is versatil enough to adapt diferent datasets and necesities.
+
 ## Model 2
+Also known as the beta version, the model is based in the alpha version. It has a similar convolution network but has a differed purpose. 
+It is designed to use more than one image to train the network (avoid memorization and starting to have a model able to learn).
+Nevertheless, and despite of his bigger network respect its precessor, does not obtain quite good results colorizing a whole group of images.
+
+After testing the model with various datasets, from the one offered in the starting point with 8 images to our own dataset consisting of more than 2000 images of dogs, it has been observed that the beta version is only capable of giving the pictures grayish and brown tones.
+
+This behavior is not compleatly understood but the register while training given makes us conclude the following statments:
+
+- Architecture problem, CNN encoder-decoder not appropiate for the task.
+- Wrong training for this model.
+- The appropriate parameters for the model are not used (learning rate or optimizer, for example). Despite having tried various optimizers, losses and learning rates, the model does not seem to learn correctly.
+
+One of the first suspicions about the malfunction of the model was the lack of epochs, however, we studied the model using 2000 epochs and saw that it was only capable of coloring in brown tones and some greenish areas, but in an almost imperceptible way.
+
+The new model (model 3) gives a new possibility branch to give better performance and in the early testing shows quite better results.
+
+Moreover, trying to obtain more conclusions on what makes de beta version give that bad results, the alpha version was tested with the beta dataset (to compare results because this version was not thought to train with more than one image) and gave significant better results (but with a huge amount of epochs respect the training done with the dataset it was testet initialy).
+
 
 ## Model 3
 
