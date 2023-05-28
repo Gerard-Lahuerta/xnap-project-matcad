@@ -97,7 +97,10 @@ This should not be a problem if the model weights are inicialized with the Incep
 
 Moreover, the model has been trained and tested with different datasets, and consecuently, getting clear results.
 - "Captioning" dataset makes the model to have (initially) random behaviour. Throughout the trainig epochs the model estabilizes and obtains relatively good results (but not enough to the complexity of the model).
-- "PERROS" dataset shows better results, obtaining some good predictions with 100 epochs. Nevertheless it does not obtain the same quality in all the types of images (generating better results this "chow chow" dogs than other).## Other autoencoders
+- "PERROS" dataset shows better results, obtaining some good predictions with 100 epochs. Nevertheless it does not obtain the same quality in all the types of images (generating better results this "chow chow" dogs than other).
+
+
+## Other autoencoders
 In the file models.py, we have also included two extra models, named `ConvAE`and `ColorizationNet`.
 
 While `ConvAE` is a very simple general autoencoder we practiced in class, `ColorizationNet` is a CNN found online designed specifically for the task of colorizing images.
