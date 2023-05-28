@@ -82,7 +82,9 @@ Moreover, trying to obtain more conclusions on what makes de beta version give t
 
 ## Model 3
 The Model 3 is called full-version model and it combines a deep Convolutional Neural Network encoder-decoder trained from scratch with high-level features extracted from the Inception-ResNet-v2 pre-trained model (pre-trained classifier on ImageNet dataset). So, the input is a grey-scale image of any size and aspect ratio with a brief description of the “things” that compose the picture like 20 % of “nature”, 30 % of “humans”, etc. This information helps the network better predict the colour. 
-We have tried different combinations of parameters to see how the CNN works. In general terms, the predictions made by this model are not quite satisfying. Even that it seems that it works better than the model 2, it does not work better than the model 1.
+
+In general terms, the predictions made by this model are not quite satisfying. Even that it seems that it works better than the model 2, it does not work better than the model 1. We have tried different combinations of parameters to see how the CNN works. 
+
 - The Split parameter related to the dataset partition doesn’t seem to affect the predicted images. 
 - The learning rate parameter does affect the resulting images. It seems that when the lr is big (0.01), the predicted images have colours not realistic without any sense (it detects different figures, but the colour itself is random) and when the lr is smaller (0.0001), the images’ predicted colour is more accurate. 
 - We have tried different criterions and it seems that MSE loss is the one that works better. 
