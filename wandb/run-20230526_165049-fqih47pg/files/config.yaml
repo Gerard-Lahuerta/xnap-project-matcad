@@ -1,0 +1,73 @@
+wandb_version: 1
+
+model:
+  desc: null
+  value: Model 1
+epochs:
+  desc: null
+  value: 1000
+learning_rate:
+  desc: null
+  value: 0.0001
+sch:
+  desc: null
+  value: StepLR
+params:
+  desc: null
+  value:
+    step_size: 30
+    gamma: 0.1
+optimizer:
+  desc: null
+  value: Adam
+criterion:
+  desc: null
+  value: MSE
+data_set:
+  desc: null
+  value: default
+split:
+  desc: null
+  value: 0.25
+save_weights:
+  desc: null
+  value: true
+import_weights:
+  desc: null
+  value: false
+save_images:
+  desc: null
+  value: true
+train:
+  desc: null
+  value: true
+test:
+  desc: null
+  value: true
+_wandb:
+  desc: null
+  value:
+    python_version: 3.8.16
+    cli_version: 0.15.2
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1685119849.895098
+    t:
+      1:
+      - 1
+      - 41
+      - 55
+      2:
+      - 1
+      - 41
+      - 55
+      3:
+      - 1
+      - 2
+      - 16
+      - 23
+      4: 3.8.16
+      5: 0.15.2
+      8:
+      - 5
