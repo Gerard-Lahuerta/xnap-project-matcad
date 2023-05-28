@@ -2,6 +2,7 @@
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=11121442&assignment_repo_type=AssignmentRepo)
 
 
+
 # Colouring greyscale images
 Final project of "Xarxes Neuronals i Aprenentatge Profund".
 
@@ -35,22 +36,29 @@ The requirements needed to include in each file are shown in the table below, ma
 | `skimage` |  | X | | | |
 
 ## Model 1
-Also knows as the alpha version, this model is a starting poing, helping to understand how an image is transformed into RGB pixel values and later translated into LAB pixel values, changing the color space. 
+Also known as the alpha version, this model is a starting poing, helping to understand how an image is transformed into RGB pixel values and later translated into LAB pixel values, changing the color space. 
 
 The data set to test and train the model initially consisted of a single image to train, which made the model learn only how to paint faces. 
 
 Subsequently, the data set of model 2 (consisting of 8 images) was used to train and test the model, where it was observed that the model was capable of coloring not only faces, but complete people with different backgrounds.
 
-This model is the fastest, providing results for 1000 epochs in a few minutes and coloring the photos quite accurately.
+This model is the fastest, providing results for 1000 epochs in a few minutes and coloring the photos quite accurately, but, if this model is trained with diferents datasets, his behaviour will change radicaly depending on its hyperparameters.
 
-CONFIRMAS SI SE HA PROBADO CON EL CAPTIONING!!!!!!!!!!!!
+Depending the amount on epochs and images used in the trainig proces the model will generate a colorized image (as a test output) that goes to:
+- grey-scale (no changes)
+- veige-filter (does not learn and give a neutral color, sum of all the primary colors that has the less "distance" between all them)
+- colourized but not all of the image (not learn enough)
+- colourized semi-perfectly or perfectly (learned)
+- colourized but the colour not maches, in a significant weay, the image (overfited learning)
+To adjust this problem we must augment in a semi-proportional form the epochs and the images used in the train process.
 
-AÑADIR CONCLUSIONES Y COSIÑAS
+This efect (augment the epochs proportionaly to the number of images used to train) has the next effect; the time needed to train the model increases crtitically.
 
-COMENTAR DEL ENCODER DECODER
+However, if the target to colorize is similar to the images learned in training, the model can  provide quite good results with less images and a significant amount of epochs.
 
+To sum up, this model, despite being the early prototipe and having some limitations is versatil enough to adapt diferent datasets and necesities.
 ## Model 2
-Also knows as the beta version, the model is based in the alpha version. It has a similar convolution network but has a differed purpose. 
+Also known as the beta version, the model is based in the alpha version. It has a similar convolution network but has a differed purpose. 
 It is designed to use more than one image to train the network (avoid memorization and starting to have a model able to learn).
 Nevertheless, and despite of his bigger network respect its precessor, does not obtain quite good results colorizing a whole group of images.
 
@@ -58,18 +66,15 @@ After testing the model with various datasets, from the one offered in the start
 
 This behavior is not compleatly understood but the register while training given makes us conclude the following statments:
 
-- 
--
--
+- Architecture problem, CNN encoder-decoder not appropiate for the task.
+- Wrong training for this model.
+- The appropriate parameters for the model are not used (learning rate or optimizer, for example). Despite having tried various optimizers, losses and learning rates, the model does not seem to learn correctly.
 
-However, this conclusions may be wrong and this behavior (that has in a similar way the alpha version in the eraliest epochs of the trainig process) could be explained by not having enough epochs to train.
+One of the first suspicions about the malfunction of the model was the lack of epochs, however, we studied the model using 2000 epochs and saw that it was only capable of coloring in brown tones and some greenish areas, but in an almost imperceptible way.
 
-Although the statements obteined in the register while trainig or the hypothesis of not having enough epochs, the new model (model 3) gives a new possibility branch to give better performance and in the early testing show quite better results.
+The new model (model 3) gives a new possibility branch to give better performance and in the early testing shows quite better results.
 
 Moreover, trying to obtain more conclusions on what makes de beta version give that bad results, the alpha version was tested with the beta dataset (to compare results because this version was not thought to train with more than one image) and gave significant better results (but with a huge amount of epochs respect the training done with the dataset it was testet initialy).
-
-Gotta point out that this last behaviour (that the alpha verions obtained better results than it successor, the beta version), is a relevant evidence of the hypothesis explained that the beta version does not train with enough epochs. But with the right amount of time it would need to determine this possibility or to obtain better results; the option of dismiss this model and take to the model 3 became our decision.
-
 ## Model 3
 
 
@@ -87,11 +92,24 @@ Because the main function of these models was to facilitate code and bug cleanup
 
 
 ## Rellevant information
+- The ConvAE and ColorizationNet models have been used for debugging and comparison purposes only.
 
---> hemos probado diversos optimizadores
+- The folder image_log contains the register of the last training.
 
---> intentamos hacer un data augmentation
+- Wandb has been used to supervise the training of the models.
+
+- Both the models and the code use pytorch.
+
+- Each function and model has it's own informative doc.
+
+- The project is designed so that any model can be executed under any condition just by changing the main configuration.
 ## General conclusions
+
+- Once the models worked to a better or worse extent, various functions were created to perform data augmentation. After some tests and seeing that it did not work, we realized that creating new data by using crops or rotations on the initials does not make sense when talking about learning to color images.
+
+- It has been observed that the models that manage to color need many epochs (greater than 1000), when training them with a relatively high number of images.
+
+- Several tests were carried out with new optimizers, criteria, adaptive learning rates and with minibatches, but no significant improvement was achieved.
 ## Authors
 
 - Gerard Lahuerta Martín --- 1601350
@@ -105,6 +123,7 @@ Because the main function of these models was to facilitate code and bug cleanup
  - [Data Starting point](https://github.com/emilwallner/Coloring-greyscale-images.git)
  - [Dog dataset](http://vision.stanford.edu/aditya86/ImageNetDogs/)
  - [Captioning dataset](https://www.kaggle.com/datasets/adityajn105/flickr8k)
+
 
 
 Xarxes Neuronals i Aprenentatge Profund
