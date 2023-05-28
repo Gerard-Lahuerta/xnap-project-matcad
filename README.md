@@ -35,6 +35,7 @@ The requirements needed to include in each file are shown in the table below, ma
 | `os` |  | X | | | |
 | `skimage` |  | X | | | |
 
+
 ## Model 1
 Also known as the alpha version, this model is a starting poing, helping to understand how an image is transformed into RGB pixel values and later translated into LAB pixel values, changing the color space. 
 
@@ -58,6 +59,7 @@ However, if the target to colorize is similar to the images learned in training,
 
 To sum up, this model, despite being the early prototipe and having some limitations is versatil enough to adapt diferent datasets and necesities.
 
+
 ## Model 2
 Also known as the beta version, the model is based in the alpha version. It has a similar convolution network but has a differed purpose. 
 It is designed to use more than one image to train the network (avoid memorization and starting to have a model able to learn).
@@ -79,6 +81,13 @@ Moreover, trying to obtain more conclusions on what makes de beta version give t
 
 
 ## Model 3
+The Model 3 is called full-version model and it combines a deep Convolutional Neural Network encoder-decoder trained from scratch with high-level features extracted from the Inception-ResNet-v2 pre-trained model (pre-trained classifier on ImageNet dataset). So, the input is a grey-scale image of any size and aspect ratio with a brief description of the “things” that compose the picture like 20 % of “nature”, 30 % of “humans”, etc. This information helps the network better predict the colour. 
+We have tried different combinations of parameters to see how the CNN works. In general terms, the predictions made by this model are not quite satisfying. Even that it seems that it works better than the model 2, it does not work better than the model 1.
+- The Split parameter related to the dataset partition doesn’t seem to affect the predicted images. 
+- The learning rate parameter does affect the resulting images. It seems that when the lr is big (0.01), the predicted images have colours not realistic without any sense (it detects different figures, but the colour itself is random) and when the lr is smaller (0.0001), the images’ predicted colour is more accurate. 
+- We have tried different criterions and it seems that MSE loss is the one that works better. 
+- Different optimizers provide the same results approximately. 
+- We have tried the model with different datasets. The model does not work well with the “Captioning” dataset (maybe because its pictures are random?) but it does work well with the “PERROS” dataset, where we see that when we train the model with 100 epochs, the predicted images are the most accurate. (It changes a lot from 10 to 100 epochs, so maybe if we increase even more the number of epochs, the result would be better).
 
 
 ## Other autoencoders
