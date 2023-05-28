@@ -81,18 +81,23 @@ Moreover, trying to obtain more conclusions on what makes de beta version give t
 
 
 ## Model 3
-The Model 3 is called full-version model and it combines a deep Convolutional Neural Network encoder-decoder trained from scratch with high-level features extracted from the Inception-ResNet-v2 pre-trained model (pre-trained classifier on ImageNet dataset). So, the input is a grey-scale image of any size and aspect ratio with a brief description of the “things” that compose the picture like 20 % of “nature”, 30 % of “humans”, etc. This information helps the network better predict the colour. 
+The Model 3 is called full-version model and, theoretically,  it combines a deep Convolutional Neural Network encoder-decoder trained from scratch with high-level features extracted from the Inception-ResNet-v2 pre-trained model (pre-trained classifier on ImageNet dataset). 
 
-In general terms, the predictions made by this model are not quite satisfying. Even that it seems that it works better than the model 2, it does not work better than the model 1. We have tried different combinations of parameters to see how the CNN works:
+In practice, the Inception-ResNet-v2 is not implemented (or we could not find it) in pytorch and does not have and equivalent extension.
 
-- The Split parameter related to the dataset partition doesn’t seem to affect the predicted images. 
-- The learning rate parameter does affect the resulting images. It seems that when the lr is big (0.01), the predicted images have colours not realistic without any sense (it detects different figures, but the colour itself is random) and when the lr is smaller (0.0001), the images’ predicted colour is more accurate. 
-- We have tried different criterions and it seems that MSE loss is the one that works better. 
-- Different optimizers provide the same results approximately. 
-- We have tried the model with different datasets. The model does not work well with the “Captioning” dataset (maybe because its pictures are random?) but it does work well with the “PERROS” dataset, where we see that when we train the model with 100 epochs, the predicted images are the most accurate. (It changes a lot from 10 to 100 epochs, so maybe if we increase even more the number of epochs, the result would be better).
+This issue will have a significant consecuence in the learning process, results generated and behaviour of the model.
 
+In general terms, the predictions made by this model are not quite satisfying. Even though it works better than the model 2, it works worse than the model 1. 
 
-## Other autoencoders
+Different combinations of parameters have been tried to see how it works and for which the model obtain better results.
+Although the apliances of other optimizers not mencioned before (like Adagrad, RMSprop, etc.), criterions (such as RMSE or MAE), and other parameter configurations, the model could not obtain much better predictions.
+
+This is explained by the low amount of epochs used to train the model (indifferently the images used to train).
+This should not be a problem if the model weights are inicialized with the Inception-ResNet-v2; but this is not the case :'(.
+
+Moreover, the model has been trained and tested with different datasets, and consecuently, getting clear results.
+- "Captioning" dataset makes the model to have (initially) random behaviour. Throughout the trainig epochs the model estabilizes and obtains relatively good results (but not enough to the complexity of the model).
+- "PERROS" dataset shows better results, obtaining some good predictions with 100 epochs. Nevertheless it does not obtain the same quality in all the types of images (generating better results this "chow chow" dogs than other).## Other autoencoders
 In the file models.py, we have also included two extra models, named `ConvAE`and `ColorizationNet`.
 
 While `ConvAE` is a very simple general autoencoder we practiced in class, `ColorizationNet` is a CNN found online designed specifically for the task of colorizing images.
