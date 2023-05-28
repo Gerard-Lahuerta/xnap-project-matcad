@@ -52,7 +52,7 @@ if __name__ == "__main__":
     # Configuration of the image colorization
     config = dict(
         # model informatin
-        model = "Model 1",
+        model = "Model 3",
         save_weights = True,
         import_weights = False,
         save_images = True,
@@ -60,13 +60,13 @@ if __name__ == "__main__":
         test = True,
         
         # training information
-        epochs = 600,
-        learning_rate = 0.0001,
+        epochs = 150,
+        learning_rate = 0.001,
         optimizer = "Adam",
         criterion = "MSE",
 
         # dataset information
-        data_set = "data/PERROS/", # "default", "data/data_2/Train/", "data/PERROS/", "data/Captioning/"
+        data_set = "data/Captioning/", # "default", "data/data_2/Train/", "data/PERROS/", "data/PERROS/"
         split = 0.1
         )
 

@@ -23,7 +23,6 @@ import torchvision.transforms as transforms
 from models.models import *
 import random
 import numpy as np
-from torchvision.models import Inception_V3_Weights
 
 # documentative libraries
 from tqdm.auto import tqdm
@@ -227,7 +226,6 @@ def built_model(config, device="cuda"):
 
     elif config["model"] == "Model 3":
         model = Model3().to(device) 
-        model.load_state_dict(Inception_V3_Weights)
 
     elif config["model"] == "ConVAE":
         model = ConvAE().to(device)
